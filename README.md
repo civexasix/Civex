@@ -125,7 +125,7 @@ CIVEX/
 ├── README.md                 ← Estás aquí: presentación del proyecto
 └── docs/
     ├── explicacion-flujo-red.md   ← Cómo funciona la red, paso a paso
-    ├── arquitectura.md       ← Redes, IPs, máquinas y firewall
+    └── arquitectura.md       ← Redes, IPs, máquinas y firewall
 ```
 
 ## 10. Aviso
