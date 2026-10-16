@@ -2,7 +2,7 @@
 
 Este documento explica **cómo viaja la información** por la red del proyecto, paso a paso y con ejemplos, pensado para que lo entienda cualquier persona aunque no sepa de redes.
 
-> Los detalles técnicos (IPs completas, tablas de máquinas y reglas) están en [`arquitectura.md`](arquitectura.md). El diagrama está en [`CIVEX-esquema-red.drawio`](CIVEX-esquema-red.drawio).
+> Los detalles técnicos (IPs completas, tablas de máquinas y reglas) están en [`arquitectura.md`](arquitectura.md).
 > `<RED_AULA>` es el prefijo de la red real de clase (por ejemplo `192.168.1`). Se confirmará al montar los equipos.
 
 ---
