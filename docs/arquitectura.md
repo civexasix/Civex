@@ -57,7 +57,3 @@ Política por defecto: **bloquear todo lo que no esté permitido** y registrar l
 2. Desde Kali, un escaneo (`nmap`) solo debe ver los puertos 22, 80 y 443.
 3. Desde Kali, `ping 10.10.10.20` debe **fallar**: la red del cliente no está expuesta.
 4. Las alertas de las pruebas deben aparecer en el dashboard de Wazuh.
-
-## 6. Diagrama completo
-
-El diagrama editable está en [`CIVEX-esquema-red.drawio`](CIVEX-esquema-red.drawio) (se abre en [app.diagrams.net](https://app.diagrams.net)).
