@@ -126,7 +126,6 @@ CIVEX/
 └── docs/
     ├── explicacion-flujo-red.md   ← Cómo funciona la red, paso a paso
     ├── arquitectura.md       ← Redes, IPs, máquinas y firewall
-    └── CIVEX-esquema-red.drawio   ← Diagrama editable (draw.io)
 ```
 
 ## 10. Aviso
