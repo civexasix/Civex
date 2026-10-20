@@ -70,6 +70,7 @@ Más detalle:
 
 - 📖 [`docs/explicacion-flujo-red.md`](docs/explicacion-flujo-red.md): explicación paso a paso de cómo viaja el tráfico por la red, con ejemplos fáciles.
 - 🔧 [`docs/arquitectura.md`](docs/arquitectura.md): redes, IPs, máquinas y reglas de firewall.
+- ⚙️ [`docs/optimizacion-recursos.md`](docs/optimizacion-recursos.md): propuesta para ahorrar RAM en Proxmox, opción de mover Wazuh a otro PC y skills de Claude útiles.
 
 ## 5. Herramientas que usaremos
 
@@ -125,7 +126,8 @@ CIVEX/
 ├── README.md                 ← Estás aquí: presentación del proyecto
 └── docs/
     ├── explicacion-flujo-red.md   ← Cómo funciona la red, paso a paso
-    └── arquitectura.md       ← Redes, IPs, máquinas y firewall
+    ├── arquitectura.md       ← Redes, IPs, máquinas y firewall
+    └── optimizacion-recursos.md   ← Propuesta de ahorro de RAM y opciones
 ```
 
 ## 10. Aviso
