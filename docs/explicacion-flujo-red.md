@@ -247,4 +247,6 @@ Proxmox hace una copia diaria de las VMs del cliente, guardando 3 diarias y 2 se
 
 ---
 
+<img src="../img/Esquemadered.png" height="600" width="auto">
+
 *Documento del proyecto CIVEX · Versión 0.1 (provisional)*
