@@ -58,4 +58,4 @@ Política por defecto: **bloquear todo lo que no esté permitido** y registrar l
 3. Desde Kali, `ping 10.10.10.20` debe **fallar**: la red del cliente no está expuesta.
 4. Las alertas de las pruebas deben aparecer en el dashboard de Wazuh.
 
-<img src="img/Esquema de red.png.png" width="400">
+<img src="img/Esquemadered.png" width="400">
