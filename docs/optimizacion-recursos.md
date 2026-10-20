@@ -117,27 +117,14 @@ Es viable y encaja con el proyecto: CIVEX es la empresa de seguridad y vigila al
 
 **Recomendación:** moverlo solo si el PC 2 tiene al menos 16 GB. Si no, dejarlo en Proxmox con los ajustes del apartado 4.
 
-## 7. Skills de Claude útiles para el proyecto
-
-Se activan en claude.ai desde **Settings → Capabilities** (activar *code execution and file creation*) y después **Customize → Skills**. Una skill propia se sube en ZIP con **Customize → Skills → "+" → Create skill → Upload a skill**. El ZIP debe tener la carpeta en la raíz y un fichero `SKILL.md` con ese nombre exacto.
-
-| Skill | Para qué |
-|-------|----------|
-| **Word / PDF / Excel / PowerPoint** (integradas) | Informes por vulnerabilidad, inventario de IPs, presentación final. |
-| **skill-creator** (oficial) | Crear una skill propia "informe-vulnerabilidad" con la plantilla del README (problema, riesgo, sistemas afectados, solución). |
-| **Trail of Bits (auditoría de código) y OWASP** | Revisar el código de la plataforma web de CIVEX-01 y de WEB-01. |
-| **SecSkills Pentesting** | Pruebas autorizadas y CTF. Solo en nuestro laboratorio. |
-
-> ⚠️ Hay investigación de Snyk que encontró skills de terceros con código malicioso. Antes de instalar cualquiera, leer su `SKILL.md` y sus scripts, y desconfiar de las que piden acceso a `Bash`. No hemos instalado ni probado las de terceros.
-
-## 8. Pendiente de decidir
+## 7. Pendiente de decidir
 
 - [ ] RAM real del PC 1 y del PC 2.
 - [ ] ¿Wazuh se queda en Proxmox o pasa al PC 2?
 - [ ] ¿CLINICA-01 como VM o como LXC?
 - [ ] Probar el presupuesto de RAM con las máquinas encendidas.
 
-## 9. Fuentes
+## 8. Fuentes
 
 - [Wazuh quickstart (requisitos)](https://documentation.wazuh.com/current/quickstart.html)
 - [Wazuh en Docker](https://documentation.wazuh.com/current/deployment-options/docker/wazuh-container.html)
@@ -146,8 +133,6 @@ Se activan en claude.ai desde **Settings → Capabilities** (activar *code execu
 - [Heap del Wazuh indexer (comunidad)](https://groups.google.com/g/wazuh/c/BF_FScLZrH8)
 - [Suricata: tuning](https://docs.suricata.io/en/latest/performance/tuning-considerations.html)
 - [Alpine vs Debian en LXC (foro Proxmox)](https://forum.proxmox.com/goto/post?id=447739)
-- [Usar skills en Claude](https://support.claude.com/en/articles/12512180-use-skills-in-claude)
-- [Skills de ciberseguridad (Snyk)](https://snyk.io/articles/top-claude-skills-cybersecurity-hacking-vulnerability-scanning/)
 
 ---
 

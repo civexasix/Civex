@@ -70,7 +70,7 @@ Más detalle:
 
 - 📖 [`docs/explicacion-flujo-red.md`](docs/explicacion-flujo-red.md): explicación paso a paso de cómo viaja el tráfico por la red, con ejemplos fáciles.
 - 🔧 [`docs/arquitectura.md`](docs/arquitectura.md): redes, IPs, máquinas y reglas de firewall.
-- ⚙️ [`docs/optimizacion-recursos.md`](docs/optimizacion-recursos.md): propuesta para ahorrar RAM en Proxmox, opción de mover Wazuh a otro PC y skills de Claude útiles.
+- ⚙️ [`docs/optimizacion-recursos.md`](docs/optimizacion-recursos.md): propuesta para ahorrar RAM en Proxmox y opción de mover Wazuh a otro PC.
 
 ## 5. Herramientas que usaremos
 
