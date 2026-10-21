@@ -1,14 +1,15 @@
 # Optimización de recursos del PC 1 (Proxmox)
 
-Propuesta para que todo el cliente (SonrisaViva) funcione con la menor RAM posible. **Es una propuesta: el esquema de red y `arquitectura.md` siguen sin cambios** hasta que el equipo decida.
+El PC 1 tiene **8 GB de RAM confirmados**. Este documento explica cómo repartirlos entre las máquinas del cliente (SonrisaViva) y por qué **WAZUH-01 se ha movido al PC 2**.
 
-> ⚠️ Las cifras marcadas como **(estimación)** son aproximaciones nuestras, no mediciones. Hay que comprobarlas en el PC real.
+> ⚠️ Las cifras marcadas como **(estimación)** son aproximaciones nuestras, no mediciones. Hay que comprobarlas con las máquinas encendidas.
 
 ---
 
-## 1. Primero: medir el PC
+## 1. Punto de partida
 
-En el host Proxmox (PC 1):
+- **RAM del PC 1:** 8 GB (confirmado).
+- Para ver el resto del hardware, en el host Proxmox:
 
 ```bash
 free -h
@@ -16,8 +17,6 @@ lscpu | grep -E "Model name|^CPU\(s\)"
 lsblk
 df -h
 ```
-
-Con esos datos se elige entre las opciones de abajo. La RAM total (8 GB o 16 GB) es lo que decide.
 
 ## 2. Qué consume la RAM
 
@@ -31,41 +30,54 @@ Con esos datos se elige entre las opciones de abajo. La RAM total (8 GB o 16 GB)
 
 > 💡 **Ejemplo:** un LXC es un piso que comparte instalaciones con el edificio (kernel del host); una VM es una casa independiente con su propia cocina y su propia caldera. La casa cuesta mucho más aunque esté vacía.
 
-**Conclusión:** casi toda la RAM la gasta **WAZUH-01**. El resto de máquinas pesa poco. Cambiar el esquema de red no ahorra memoria, porque los bridges no consumen.
+**Conclusión:** Wazuh por sí solo pide tanta RAM como todo el PC 1. Con 8 GB no cabía junto al resto sin recortes arriesgados, así que se mueve al PC 2 (apartado 6). Cambiar el esquema de red no ahorra memoria, porque los bridges no consumen.
 
-## 3. Decisiones por máquina
+## 3. Decisiones por máquina (PC 1)
 
-| Máquina | Propuesta | Motivo |
-|---------|-----------|--------|
-| **WAZUH-01** | Seguir como **VM Ubuntu 24.04** | Ubuntu está en la lista recomendada de Wazuh. Alpine no. En LXC exigiría ajustar `vm.max_map_count` en el host y hay problemas sin resolver. |
-| **FW-01** | Seguir como VM Debian 12 | Es el perímetro: mejor aislado en VM. Bajar a ~1 GB con Suricata ajustado. |
-| **WEB-01** | Seguir como **VM** pequeña (512 MB – 1 GB) | Es el objetivo de los ataques de Kali; un LXC comparte kernel con el host. |
-| **CLINICA-01** | Opción: pasar a **LXC sin privilegios** | Base de datos interna; ahorra bastante RAM. Es una opción, no obligatoria. |
-| **DNS-01, MON-01** | Se quedan como LXC | Ya son baratos. |
+| Máquina | Decisión | Motivo |
+|---------|----------|--------|
+| **FW-01** | VM Debian 12 | Es el perímetro: mejor aislado en VM. Se puede bajar a ~1 GB ajustando Suricata. |
+| **CLINICA-01** | VM Ubuntu 24.04 | Con Wazuh fuera sobra RAM, así que no hace falta pasarla a LXC. |
+| **WEB-01** | VM pequeña (512 MB – 1 GB) | Es el objetivo de los ataques de Kali; un LXC comparte kernel con el host. |
+| **DNS-01, MON-01** | LXC | Son baratos en memoria. |
+| **WAZUH-01** | Se traslada al **PC 2** | Ver apartado 6. |
 
 **Descartado:**
 
-- **Alpine:** Wazuh no lo soporta, y en contenedores la diferencia con Debian es pequeña. Además usa musl, que da problemas de compatibilidad.
+- **Alpine:** Wazuh no lo soporta (recomienda Ubuntu, entre otros), y en contenedores la diferencia con Debian es pequeña. Además usa musl, que da problemas de compatibilidad.
 - **Docker:** no ahorra RAM. El Wazuh en Docker pide como mínimo 8 GB y 4 cores.
 
-## 4. Ajustes concretos
+## 4. Presupuesto de RAM del PC 1 (estimación)
+
+Sin Wazuh en este PC:
+
+| Componente | Tipo | RAM asignada (GB) |
+|------------|------|-------------------|
+| Host Proxmox | — | 2 |
+| FW-01 | VM | 1 – 2 |
+| CLINICA-01 | VM | 1 |
+| WEB-01 | VM | 0,75 |
+| DNS-01 | LXC | 0,25 |
+| MON-01 | LXC | 0,75 |
+| **Total asignado** | | **5,75 – 6,75** |
+| **Libre de los 8 GB** | | **2,25 – 1,25** |
+
+- **Sobra margen.** Incluso en el peor caso (FW-01 con 2 GB, como indica el esquema) quedan unos 1,25 GB libres, un ~16 %, por encima del 10-15 % que se recomienda dejar sin asignar. Si Suricata cabe en 1 GB, el margen sube a ~2,25 GB.
+- Con Wazuh dentro de este PC habría hecho falta sumar entre 3 GB (muy recortado) y 8 GiB (lo recomendado), y el total habría superado los 8 GB.
+- El consumo real será menor que lo asignado, porque las máquinas no usan toda su RAM a la vez.
+
+## 5. Ajustes concretos
 
 ### Host Proxmox
 
-- **KSM** (deduplica memoria entre VMs parecidas):
+- **KSM:** Proxmox lo trae **activado por defecto**. En CIVEX lo dejamos activado por el ahorro de RAM entre VMs parecidas. Si hiciera falta excluir una VM concreta:
   ```bash
-  echo "scan-time" > /sys/kernel/mm/ksm/advisor_mode
-  echo 1 > /sys/kernel/mm/ksm/run
+  qm set <vmid> --allow-ksm 0
   ```
-  Es una red de seguridad, no un plan. Solo conviene si controlamos todas las VMs.
-- **Ballooning:** activar con mínimo y máximo en las VMs ligeras. **No** en WAZUH-01 ni en CLINICA-01: si falta memoria, el sistema puede matar la base de datos o el indexer.
+  Es una red de seguridad, no un plan. Según la fuente, conviene tenerlo activado cuando controlamos todas las VMs, que es nuestro caso.
+- **Ballooning:** activar con mínimo y máximo solo en las VMs ligeras. **No** en CLINICA-01: si falta memoria, el sistema puede matar la base de datos.
 - **No asignar el 100 % de la RAM:** dejar libre un 10-15 %. Con sobreasignación, el host puede activar el OOM killer.
 - **ZFS (solo si se usa):** limitar el ARC en `/etc/modprobe.d/zfs.conf`, por ejemplo `options zfs zfs_arc_max=2147483648`. Después, `update-initramfs -u -k all`.
-
-### WAZUH-01
-
-- En `/etc/wazuh-indexer/jvm.options`, poner `-Xms` y `-Xmx` con el **mismo valor**, como máximo la mitad de la RAM de la VM (regla de la comunidad de Wazuh, no de la documentación oficial).
-- Si se usa Docker en algún momento: `vm.max_map_count=262144` en el host.
 
 ### FW-01 (Suricata)
 
@@ -77,52 +89,39 @@ Según la documentación de Suricata, estos valores multiplican la memoria:
 
 Bajarlos reduce RAM, pero un ring pequeño provoca pérdida de paquetes. Ajustar midiendo.
 
-## 5. Presupuesto de RAM (estimación)
+## 6. WAZUH-01 en el PC 2
 
-| | 16 GB | 8 GB |
-|---|---|---|
-| Host Proxmox | 2 | 2 |
-| WAZUH-01 | 6 | 3 |
-| FW-01 | 2 | 1 |
-| CLINICA-01 | 1,5 | 0,5 (LXC) |
-| WEB-01 | 1 | 0,5 |
-| DNS-01 + MON-01 | 1 | 0,6 |
-| **Total** | **~13,5** | **~7,6** |
+WAZUH-01 pasa a ser una **VM Ubuntu Server 24.04 en el PC 2 (CIVEX, VirtualBox)**, dentro de **RED-CIVEX** con la IP `10.10.20.30`. Encaja con el proyecto: CIVEX es la empresa de seguridad y vigila al cliente desde su propia red. No va en el PC 3, porque el atacante no debería alojar el SOC.
 
-- **16 GB:** cabe con margen. Wazuh queda por debajo de los 8 GiB oficiales, así que hay que probarlo.
-- **8 GB:** sin holgura. Habría que apagar MON-01 cuando no se use, o mover Wazuh a otro PC (siguiente apartado).
+**Cómo llegan los logs**
 
-## 6. Opción: Wazuh en otro PC
+1. Los agentes de LAN-CLIENTE y DMZ (y el de FW-01) envían sus logs a `10.10.20.30`, puertos 1514 y 1515.
+2. FW-01 los saca por su interfaz WAN, con NAT, hacia `<RED_AULA>.211` (CIVEX-01), que actúa de intermediario.
+3. CIVEX-01 reenvía solo esos puertos hacia `10.10.20.30`.
+4. CIVEX-01 habla con WAZUH-01 directamente, porque están en la misma red.
 
-Es viable y encaja con el proyecto: CIVEX es la empresa de seguridad y vigila al cliente desde fuera. Lo razonable sería el **PC 2 (Marc)**, junto a CIVEX-01. **No** en el PC 3: el atacante no debería alojar el SOC.
+El detalle de reglas está en [`arquitectura.md`](arquitectura.md).
 
-**Ventajas**
+**Requisitos**
 
-- Proxmox queda mucho más aliviado (unos 3-6 GB menos).
-- Wazuh puede usar los 8 GiB recomendados, sin recortes.
+- La recomendación oficial para 1-25 agentes es **8 GiB de RAM, 4 vCPU y 50 GB de disco**. Con nuestras pocas máquinas debería bastar.
+- El PC 2 también aloja CIVEX-01 (4 GB en el esquema). Hay que comprobar que su RAM da para las dos VMs.
+- Si la RAM del PC 2 va justa, se puede dar menos a WAZUH-01 y bajar el heap del indexer: en `/etc/wazuh-indexer/jvm.options`, `-Xms` y `-Xmx` con el **mismo valor**, como máximo la mitad de la RAM de la VM (regla de la comunidad de Wazuh, no de la documentación oficial).
+- La red RED-CIVEX es solo anfitrión y no tiene salida a Internet. Para instalar y actualizar WAZUH-01 hay que darle un adaptador NAT temporal.
 
-**Cambios necesarios**
+**A tener en cuenta**
 
-- WAZUH-01 pasa a tener IP en la red del aula (por ejemplo `<RED_AULA>.231`), con adaptador puente en VirtualBox.
-- Los agentes de LAN-CLIENTE y DMZ salen por FW-01 hacia esa IP (puertos 1514 y 1515). Hoy la regla apunta a `10.10.10.30`.
-- CIVEX-01 envía sus logs directamente, sin pasar por el redirect del firewall.
-- Actualizar esquema, `arquitectura.md`, `explicacion-flujo-red.md` y las notas de backups.
-
-**Inconvenientes**
-
-- El PC 2 necesita RAM para CIVEX-01 (4 GB en el esquema) más Wazuh, y unos 50 GB de disco.
-- Los logs dependen de la red del aula. Si el modo puente falla, hay que usar Red NAT y añadir los puertos de Wazuh.
-- Se pierde el aislamiento "todo dentro del PC 1".
+- Los logs dependen de la red del aula. Si el modo puente falla, hay que usar Red NAT en VirtualBox y añadir los puertos de Wazuh.
 - Si el PC 2 se apaga, el SOC deja de funcionar.
-
-**Recomendación:** moverlo solo si el PC 2 tiene al menos 16 GB. Si no, dejarlo en Proxmox con los ajustes del apartado 4.
+- WAZUH-01 ya no entra en los backups de Proxmox.
+- Se pierde el aislamiento "todo dentro del PC 1".
 
 ## 7. Pendiente de decidir
 
-- [ ] RAM real del PC 1 y del PC 2.
-- [ ] ¿Wazuh se queda en Proxmox o pasa al PC 2?
-- [ ] ¿CLINICA-01 como VM o como LXC?
-- [ ] Probar el presupuesto de RAM con las máquinas encendidas.
+- [ ] RAM, CPU y disco reales del PC 2.
+- [ ] Cómo hacer copia de seguridad de WAZUH-01 al estar fuera de Proxmox.
+- [ ] Probar el presupuesto de RAM del PC 1 con las máquinas encendidas.
+- [ ] Actualizar `img/Esquemadered.png` con la nueva ubicación de WAZUH-01.
 
 ## 8. Fuentes
 
@@ -136,4 +135,4 @@ Es viable y encaja con el proyecto: CIVEX es la empresa de seguridad y vigila al
 
 ---
 
-*Documento del proyecto CIVEX · Propuesta de optimización · Versión 0.1 (provisional)*
+*Documento del proyecto CIVEX · Optimización de recursos · Versión 0.1 (provisional)*

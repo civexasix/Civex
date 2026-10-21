@@ -44,8 +44,8 @@ Analizar → Prevenir → Atacar → Detectar → Informar → Corregir → Recu
 
 | PC | Responsable | Qué representa | Tecnologías principales |
 |----|-------------|----------------|-------------------------|
-| **PC 1** | Felipe | Infraestructura del **cliente** (SonrisaViva) | Proxmox VE, Linux, DNS, DMZ, nftables, Suricata, Wazuh, Prometheus/Grafana |
-| **PC 2** | Marc | **Nuestra empresa** (CIVEX) | VirtualBox, Ubuntu Server, plataforma web, Firebase, informes y backups |
+| **PC 1** | Felipe | Infraestructura del **cliente** (SonrisaViva) | Proxmox VE, Linux, DNS, DMZ, nftables, Suricata, Prometheus/Grafana |
+| **PC 2** | Marc | **Nuestra empresa** (CIVEX) | VirtualBox, Ubuntu Server, plataforma web, Firebase, informes, backups y Wazuh (SOC) |
 | **PC 3** | Alejandro | El **atacante** | VirtualBox, Kali Linux |
 
 ### Esquema simplificado
@@ -55,14 +55,16 @@ Analizar → Prevenir → Atacar → Detectar → Informar → Corregir → Recu
         ┌──────────────────┼──────────────────┐
         │                  │                  │
      PC 1 (Felipe)      PC 2 (Marc)       PC 3 (Alejandro)
-   Cliente SonrisaViva   CIVEX            Kali (atacante)
+   Cliente SonrisaViva   CIVEX · Wazuh    Kali (atacante)
         │
      ┌──┴── FW-01 (firewall) ──┐
      │                         │
  RED CLIENTE                  DMZ
  DNS · Clínica               Web de citas
- Wazuh · Monitorización
+ Monitorización
 ```
+
+> ⚠️ **Esquema pendiente de actualizar:** la imagen `img/Esquemadered.png` todavía muestra WAZUH-01 en el PC 1 (`10.10.10.30`). Ahora está en el **PC 2**, en RED-CIVEX (`10.10.20.30`). Los documentos de `docs/` ya reflejan el cambio.
 
 > 💡 **¿Qué es una DMZ?** Es una zona intermedia donde se pone lo que tiene que ser visible desde fuera (la web de citas), para que, si alguien la hackea, **no llegue directamente** a los datos de los pacientes.
 
@@ -70,7 +72,7 @@ Más detalle:
 
 - 📖 [`docs/explicacion-flujo-red.md`](docs/explicacion-flujo-red.md): explicación paso a paso de cómo viaja el tráfico por la red, con ejemplos fáciles.
 - 🔧 [`docs/arquitectura.md`](docs/arquitectura.md): redes, IPs, máquinas y reglas de firewall.
-- ⚙️ [`docs/optimizacion-recursos.md`](docs/optimizacion-recursos.md): propuesta para ahorrar RAM en Proxmox y opción de mover Wazuh a otro PC.
+- ⚙️ [`docs/optimizacion-recursos.md`](docs/optimizacion-recursos.md): reparto de la RAM del PC 1 (8 GB) y por qué Wazuh está en el PC 2.
 
 ## 5. Herramientas que usaremos
 
@@ -80,7 +82,7 @@ Más detalle:
 | **VirtualBox** | Lo mismo, pero más sencillo, para los PCs 2 y 3. |
 | **nftables** | El firewall: decide qué tráfico de red pasa y cuál se bloquea. |
 | **Suricata** | Vigilante de red (IDS): avisa si ve tráfico sospechoso. |
-| **Wazuh** | El "centro de control" de seguridad (SOC): recoge logs y alertas de todas las máquinas. |
+| **Wazuh** | El "centro de control" de seguridad (SOC): recoge logs y alertas de todas las máquinas. Está en el PC 2 (`10.10.20.30`). |
 | **Prometheus + Grafana** | Monitorizan el estado de los servidores (CPU, memoria, etc.) con gráficas. |
 | **Kali Linux** | Sistema con herramientas para hacer pruebas de seguridad. |
 | **Firebase** | Base de datos en tiempo real para mostrar resultados en la web. |
@@ -127,7 +129,7 @@ CIVEX/
 └── docs/
     ├── explicacion-flujo-red.md   ← Cómo funciona la red, paso a paso
     ├── arquitectura.md       ← Redes, IPs, máquinas y firewall
-    └── optimizacion-recursos.md   ← Propuesta de ahorro de RAM y opciones
+    └── optimizacion-recursos.md   ← RAM del PC 1 y Wazuh en el PC 2
 ```
 
 ## 10. Aviso

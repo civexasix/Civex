@@ -16,7 +16,7 @@ Hemos montado una **mini Internet** con tres ordenadores: uno hace de **cliente*
 | PC | Responsable | Papel | Sistema de virtualización |
 |----|-------------|-------|---------------------------|
 | **PC 1** | Felipe | Infraestructura del cliente (SonrisaViva) | **Proxmox VE** |
-| **PC 2** | Marc | Empresa CIVEX (plataforma web, Firebase) | **VirtualBox** |
+| **PC 2** | Marc | Empresa CIVEX (plataforma web, Firebase y SOC con Wazuh) | **VirtualBox** |
 | **PC 3** | Alejandro | Atacante (Kali Linux) | **VirtualBox** |
 
 La **red del aula** hace de "Internet": los tres PCs están conectados a ella y es el único punto en común.
@@ -56,7 +56,7 @@ La **red del aula** hace de "Internet": los tres PCs están conectados a ella y 
 | **Aula** ("Internet") | `<RED_AULA>.0/24` | Switch de clase | Router del aula |
 | **LAN-CLIENTE** | `10.10.10.0/24` | PC 1 (Proxmox) | FW-01 (`10.10.10.1`) |
 | **DMZ** | `10.10.11.0/24` | PC 1 (Proxmox) | FW-01 (`10.10.11.1`) |
-| **RED-CIVEX** | `10.10.20.0/24` | PC 2 (VirtualBox) | Privada, sin gateway |
+| **RED-CIVEX** | `10.10.20.0/24` | PC 2 (VirtualBox): CIVEX-01 y WAZUH-01 | Privada, sin gateway |
 | **RED-KALI** | `10.10.30.0/24` | PC 3 (VirtualBox) | Privada, sin gateway |
 
 Cada PC tiene su **red propia y separada**. Las redes `10.10.x.x` son privadas: no se ven entre sí ni desde la red del aula, salvo lo que el firewall permita.
@@ -85,12 +85,13 @@ Red del aula ─ vmbr0 ─┐   (.202)
                     FW-01 ─ vmbr1 ─ LAN-CLIENTE (10.10.10.1)
                       │               · DNS-01       10.10.10.10
                       │               · CLINICA-01   10.10.10.20
-                      │               · WAZUH-01     10.10.10.30
                       │               · MON-01       10.10.10.40
                       │
                       └──── vmbr2 ─ DMZ (10.10.11.1)
                                       · WEB-01       10.10.11.10
 ```
+
+> Wazuh (WAZUH-01) ya no está en el PC 1: vive en el PC 2 (ver el apartado 6).
 
 > 💡 **Ejemplo:** el firewall es el portero de un edificio con dos zonas: las viviendas (LAN-CLIENTE) y el recibidor (DMZ). Quien viene de la calle solo habla con el portero. Él decide a quién deja pasar y adónde.
 
@@ -109,9 +110,9 @@ Visto desde la red del aula, **FW-01 es un equipo más**, como el PC de cualquie
 
 Además, Proxmox **no tiene IP** en `vmbr1` ni `vmbr2`, así que el host tampoco es alcanzable desde las redes internas.
 
-## 6. PC 2 y PC 3 (VirtualBox): CIVEX y Kali
+## 6. PC 2 y PC 3 (VirtualBox): CIVEX, Wazuh y Kali
 
-Cada VM tiene **dos adaptadores de red**, y cada uno cumple una función distinta:
+CIVEX-01 y KALI-01 tienen **dos adaptadores de red**, y cada uno cumple una función distinta:
 
 | Adaptador | Para qué sirve | Ejemplo cotidiano |
 |-----------|----------------|-------------------|
@@ -121,6 +122,7 @@ Cada VM tiene **dos adaptadores de red**, y cada uno cumple una función distint
 | VM | Adaptador 1 (puente) | Adaptador 2 (solo anfitrión) |
 |----|----------------------|------------------------------|
 | **CIVEX-01** | `<RED_AULA>.211` | `10.10.20.10` |
+| **WAZUH-01** | — (no tiene) | `10.10.20.30` |
 | **KALI-01** | `<RED_AULA>.221` | `10.10.30.10` |
 
 **Aclaraciones importantes:**
@@ -133,9 +135,18 @@ Cada VM tiene **dos adaptadores de red**, y cada uno cumple una función distint
 Red del aula
    │
    ├── Adap.1 (puente) ── CIVEX-01 ── Adap.2 (solo anfitrión) ── RED-CIVEX 10.10.20.0/24
+   │                                                                └── WAZUH-01 10.10.20.30
    │
    └── Adap.1 (puente) ── KALI-01  ── Adap.2 (solo anfitrión) ── RED-KALI  10.10.30.0/24
 ```
+
+### 6.1 WAZUH-01: el SOC dentro de la red de CIVEX
+
+WAZUH-01 tiene **una sola tarjeta**, en RED-CIVEX (`10.10.20.30`), y no tiene gateway. Solo lo ve CIVEX-01. Los logs del cliente le llegan a través de FW-01 y de CIVEX-01, que actúa de intermediario (ver el Flujo 5).
+
+> 💡 **Ejemplo:** WAZUH-01 es la sala de control de las oficinas de CIVEX. Quien viene de fuera no puede entrar: los guardias del cliente entregan sus diarios en recepción (CIVEX-01) y recepción los lleva a la sala de control.
+
+Como RED-CIVEX no sale a Internet, WAZUH-01 necesita un adaptador NAT **temporal** para instalarse y actualizarse.
 
 ## 7. Los flujos, paso a paso
 
@@ -170,11 +181,13 @@ Red del aula
 ### Flujo 5 · Los logs llegan a Wazuh
 
 1. Todas las máquinas Linux llevan un **agente de Wazuh**.
-2. Los agentes envían sus registros a **WAZUH-01** (`10.10.10.30`), puertos 1514 y 1515.
-3. FW-01 lleva además **Suricata**, que vigila el tráfico. Sus avisos también los recoge el agente de Wazuh.
-4. **CIVEX-01** (PC 2) envía los suyos a la `.202` del firewall, y este los **redirige a WAZUH-01**.
+2. Los agentes del cliente (LAN-CLIENTE y DMZ) envían sus registros a **WAZUH-01** (`10.10.20.30`, en el PC 2), puertos 1514 y 1515.
+3. Los registros pasan por **FW-01**, que los saca hacia `<RED_AULA>.211` (**CIVEX-01**) aplicando NAT.
+4. **CIVEX-01** reenvía solo esos puertos hacia WAZUH-01, y únicamente si vienen de FW-01.
+5. FW-01 lleva además **Suricata**, que vigila el tráfico. Sus avisos también los recoge el agente de Wazuh de FW-01, por el mismo camino.
+6. **CIVEX-01** está en la misma red que WAZUH-01 (RED-CIVEX), así que le envía sus logs directamente.
 
-> 💡 Cada máquina es un guardia que apunta lo que pasa en su diario (log). Wazuh es la central que lee todos los diarios a la vez.
+> 💡 Cada máquina es un guardia que apunta lo que pasa en su diario (log). Wazuh es la central que lee todos los diarios a la vez. Los diarios del cliente llegan por correo interno: salen del edificio del cliente (FW-01) y los recoge la recepción de CIVEX (CIVEX-01).
 
 ### Flujo 6 · Monitorización
 
@@ -192,7 +205,7 @@ Red del aula
 
 ### Flujo 8 · Qué pasa si la web es hackeada
 
-La regla clave del firewall es **DMZ → LAN-CLIENTE: bloqueado** (salvo WEB-01 → CLINICA-01 por el puerto 3306). Si alguien consiguiera controlar WEB-01, no podría moverse libremente por la red interna ni llegar a Wazuh, al DNS ni al resto de servidores.
+La regla clave del firewall es **DMZ → LAN-CLIENTE: bloqueado** (salvo WEB-01 → CLINICA-01 por el puerto 3306). Si alguien consiguiera controlar WEB-01, no podría moverse libremente por la red interna. A Wazuh solo podría llegar por los puertos de envío de logs (1514/1515), y no al resto de servidores.
 
 ## 8. Reglas del firewall (resumen)
 
@@ -202,10 +215,9 @@ La regla clave del firewall es **DMZ → LAN-CLIENTE: bloqueado** (salvo WEB-01 
 |----------------|----------|
 | Aula → FW-01 (80/443) → WEB-01 | Web pública de citas |
 | Administrador → FW-01 (22) | Gestionar el firewall |
-| CIVEX-01 → FW-01 (1514/1515) → WAZUH-01 | Logs de CIVEX-01 |
 | LAN-CLIENTE y DMZ → Internet (80/443) | Actualizaciones |
 | LAN-CLIENTE y DMZ → DNS-01 (53) | Resolución de nombres |
-| LAN-CLIENTE y DMZ → WAZUH-01 (1514/1515) | Agentes de Wazuh |
+| LAN-CLIENTE, DMZ y FW-01 → `10.10.20.30` (1514/1515), vía `<RED_AULA>.211` con NAT | Agentes de Wazuh (WAZUH-01 está en el PC 2) |
 | WEB-01 → CLINICA-01 (3306) | Web contra la base de datos |
 | MON-01 → todas las VMs (9100) | Monitorización |
 | **DMZ → LAN-CLIENTE** | **Bloqueado** |
@@ -219,8 +231,10 @@ La regla clave del firewall es **DMZ → LAN-CLIENTE: bloqueado** (salvo WEB-01 
 | Desde Kali: `nmap <RED_AULA>.202` | Solo aparecen los puertos 22, 80 y 443. |
 | Desde Kali: `ping 10.10.10.20` | **Falla**: la red del cliente no está expuesta. |
 | WEB-01 → CLINICA-01 puerto 3306 | Funciona. |
-| WEB-01 → WAZUH-01 puerto 22 | **Bloqueado**. |
-| Panel de Wazuh | Aparecen las alertas generadas por las pruebas. |
+| CLINICA-01 y WEB-01 → `10.10.20.30` puerto 1514 | Funciona (los agentes llegan a Wazuh). |
+| WEB-01 → `10.10.20.30` puerto 22 | **Bloqueado**. |
+| Desde Kali, con una ruta a `10.10.20.30` vía `<RED_AULA>.211` | **Falla**: CIVEX-01 solo reenvía lo que viene de FW-01. |
+| Panel de Wazuh | Aparecen las alertas de las pruebas y los logs de los agentes del PC 1 y de CIVEX-01. |
 
 ## 10. Preguntas frecuentes
 
@@ -243,9 +257,14 @@ Se cambia a Red NAT en VirtualBox con reenvío de puertos y se actualiza el esqu
 No, está en modo IDS: solo detecta y avisa. Sus eventos se envían a Wazuh.
 
 **¿Qué pasa con los backups?**
-Proxmox hace una copia diaria de las VMs del cliente, guardando 3 diarias y 2 semanales, en un disco distinto al del sistema.
+Proxmox hace una copia diaria de las VMs del cliente, guardando 3 diarias y 2 semanales, en un disco distinto al del sistema. WAZUH-01 ya no está en el PC 1, así que no entra en esas copias y hay que decidir cómo respaldarlo.
+
+**¿Por qué Wazuh está en el PC 2 y no en el PC 1?**
+Porque Wazuh necesita mucha memoria (la recomendación oficial es 8 GiB) y el PC 1 tiene 8 GB en total. Además, tiene sentido que el SOC esté en la red de CIVEX, que es la empresa que vigila al cliente. Más detalle en [`optimizacion-recursos.md`](optimizacion-recursos.md).
 
 ---
+
+> ⚠️ **Esquema pendiente de actualizar:** la imagen todavía muestra WAZUH-01 en el PC 1 (`10.10.10.30`). Ahora está en el PC 2, en RED-CIVEX (`10.10.20.30`).
 
 <img src="../img/Esquemadered.png" height="600" width="auto">
 
