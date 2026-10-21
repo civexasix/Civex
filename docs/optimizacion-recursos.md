@@ -117,8 +117,6 @@ El detalle de reglas está en [`arquitectura.md`](arquitectura.md).
 - Se pierde el aislamiento "todo dentro del PC 1".
 
 ## 7. Pendiente de decidir
-
-- [ ] RAM, CPU y disco reales del PC 2.
 - [ ] Cómo hacer copia de seguridad de WAZUH-01 al estar fuera de Proxmox.
 - [ ] Probar el presupuesto de RAM del PC 1 con las máquinas encendidas.
 - [ ] Actualizar `img/Esquemadered.png` con la nueva ubicación de WAZUH-01.
