@@ -9,7 +9,7 @@ Este documento explica **cómo viaja la información** por la red del proyecto, 
 
 ## 1. La idea en una frase
 
-Hemos montado una **mini Internet** con tres ordenadores: uno hace de **cliente** (la clínica), otro de **nuestra empresa** (CIVEX) y otro de **atacante** (Kali). El cliente está protegido por un **firewall** y comprobamos que el atacante solo puede ver lo que debe ver.
+Vamos a montar una **mini Internet** con tres ordenadores: uno hará de **cliente** (la clínica), otro de **nuestra empresa** (CIVEX) y otro de **atacante** (Kali). El cliente estará protegido por un **firewall** y comprobaremos que el atacante solo puede ver lo que debe ver.
 
 ## 2. Los tres PCs
 
@@ -146,7 +146,7 @@ WAZUH-01 tiene **una sola tarjeta**, en RED-CIVEX (`10.10.20.30`), y no tiene ga
 
 > 💡 **Ejemplo:** WAZUH-01 es la sala de control de las oficinas de CIVEX. Quien viene de fuera no puede entrar: los guardias del cliente entregan sus diarios en recepción (CIVEX-01) y recepción los lleva a la sala de control.
 
-Como RED-CIVEX no sale a Internet, WAZUH-01 necesita un adaptador NAT **temporal** para instalarse y actualizarse.
+Como RED-CIVEX no sale a Internet, habrá que decidir cómo instalar y actualizar WAZUH-01.
 
 ## 7. Los flujos, paso a paso
 
@@ -180,12 +180,11 @@ Como RED-CIVEX no sale a Internet, WAZUH-01 necesita un adaptador NAT **temporal
 
 ### Flujo 5 · Los logs llegan a Wazuh
 
-1. Todas las máquinas Linux llevan un **agente de Wazuh**.
-2. Los agentes del cliente (LAN-CLIENTE y DMZ) envían sus registros a **WAZUH-01** (`10.10.20.30`, en el PC 2), puertos 1514 y 1515.
-3. Los registros pasan por **FW-01**, que los saca hacia `<RED_AULA>.211` (**CIVEX-01**) aplicando NAT.
-4. **CIVEX-01** reenvía solo esos puertos hacia WAZUH-01, y únicamente si vienen de FW-01.
-5. FW-01 lleva además **Suricata**, que vigila el tráfico. Sus avisos también los recoge el agente de Wazuh de FW-01, por el mismo camino.
-6. **CIVEX-01** está en la misma red que WAZUH-01 (RED-CIVEX), así que le envía sus logs directamente.
+1. Todas las máquinas Linux llevarán un **agente de Wazuh**.
+2. Los agentes del cliente (LAN-CLIENTE y DMZ) enviarán sus registros a **WAZUH-01** (`10.10.20.30`, en el PC 2), puertos 1514 y 1515.
+3. Los registros saldrán por **FW-01** hacia **CIVEX-01** (`<RED_AULA>.211`), que los pasará a WAZUH-01 y solo aceptará los que vengan de FW-01.
+4. FW-01 llevará además **Suricata**, que vigila el tráfico. Sus avisos también los recogerá el agente de Wazuh de FW-01, por el mismo camino.
+5. **CIVEX-01** está en la misma red que WAZUH-01 (RED-CIVEX), así que le enviará sus logs directamente.
 
 > 💡 Cada máquina es un guardia que apunta lo que pasa en su diario (log). Wazuh es la central que lee todos los diarios a la vez. Los diarios del cliente llegan por correo interno: salen del edificio del cliente (FW-01) y los recoge la recepción de CIVEX (CIVEX-01).
 
@@ -217,7 +216,7 @@ La regla clave del firewall es **DMZ → LAN-CLIENTE: bloqueado** (salvo WEB-01 
 | Administrador → FW-01 (22) | Gestionar el firewall |
 | LAN-CLIENTE y DMZ → Internet (80/443) | Actualizaciones |
 | LAN-CLIENTE y DMZ → DNS-01 (53) | Resolución de nombres |
-| LAN-CLIENTE, DMZ y FW-01 → `10.10.20.30` (1514/1515), vía `<RED_AULA>.211` con NAT | Agentes de Wazuh (WAZUH-01 está en el PC 2) |
+| LAN-CLIENTE, DMZ y FW-01 → WAZUH-01 `10.10.20.30` (1514/1515), pasando por CIVEX-01 | Agentes de Wazuh (WAZUH-01 está en el PC 2) |
 | WEB-01 → CLINICA-01 (3306) | Web contra la base de datos |
 | MON-01 → todas las VMs (9100) | Monitorización |
 | **DMZ → LAN-CLIENTE** | **Bloqueado** |
@@ -233,7 +232,7 @@ La regla clave del firewall es **DMZ → LAN-CLIENTE: bloqueado** (salvo WEB-01 
 | WEB-01 → CLINICA-01 puerto 3306 | Funciona. |
 | CLINICA-01 y WEB-01 → `10.10.20.30` puerto 1514 | Funciona (los agentes llegan a Wazuh). |
 | WEB-01 → `10.10.20.30` puerto 22 | **Bloqueado**. |
-| Desde Kali, con una ruta a `10.10.20.30` vía `<RED_AULA>.211` | **Falla**: CIVEX-01 solo reenvía lo que viene de FW-01. |
+| Desde Kali → `10.10.20.30` | **Falla**: WAZUH-01 no es alcanzable desde fuera. |
 | Panel de Wazuh | Aparecen las alertas de las pruebas y los logs de los agentes del PC 1 y de CIVEX-01. |
 
 ## 10. Preguntas frecuentes
@@ -242,7 +241,7 @@ La regla clave del firewall es **DMZ → LAN-CLIENTE: bloqueado** (salvo WEB-01 
 Porque la web es lo único expuesto. Si la hackean, el atacante queda aislado de la base de datos y de Wazuh.
 
 **¿Por qué Kali no hace ping a `10.10.10.20`?**
-Porque esa red es privada y solo se llega a ella a través del firewall. Que falle el ping demuestra que el diseño funciona.
+Porque esa red es privada y solo se llega a ella a través del firewall. Si falla el ping, será buena señal de que el diseño funciona (lo comprobaremos al montarlo).
 
 **¿Por qué no usamos VLANs?**
 Cada red es un bridge de Proxmox independiente. Es más simple y se ve mejor en el esquema.
@@ -257,14 +256,14 @@ Se cambia a Red NAT en VirtualBox con reenvío de puertos y se actualiza el esqu
 No, está en modo IDS: solo detecta y avisa. Sus eventos se envían a Wazuh.
 
 **¿Qué pasa con los backups?**
-Proxmox hace una copia diaria de las VMs del cliente, guardando 3 diarias y 2 semanales, en un disco distinto al del sistema. WAZUH-01 ya no está en el PC 1, así que no entra en esas copias y hay que decidir cómo respaldarlo.
+Está previsto que Proxmox haga una copia diaria de las VMs del cliente, guardando 3 diarias y 2 semanales, en un disco distinto al del sistema. WAZUH-01 ya no está en el PC 1, así que no entrará en esas copias y hay que decidir cómo respaldarlo.
 
 **¿Por qué Wazuh está en el PC 2 y no en el PC 1?**
-Porque Wazuh necesita mucha memoria (la recomendación oficial es 8 GiB) y el PC 1 tiene 8 GB en total. Además, tiene sentido que el SOC esté en la red de CIVEX, que es la empresa que vigila al cliente. Más detalle en [`optimizacion-recursos.md`](optimizacion-recursos.md).
+Porque, según su documentación, Wazuh necesita mucha memoria (se recomiendan 8 GiB) y el PC 1 tiene 8 GB en total. Además, tiene sentido que el SOC esté en la red de CIVEX, que es la empresa que vigila al cliente. Más detalle en [`optimizacion-recursos.md`](optimizacion-recursos.md).
 
 ---
 
-> ⚠️ **Esquema pendiente de actualizar:** la imagen todavía muestra WAZUH-01 en el PC 1 (`10.10.10.30`). Ahora está en el PC 2, en RED-CIVEX (`10.10.20.30`).
+> ⚠️ **Esquema pendiente de actualizar:** la imagen todavía muestra WAZUH-01 en el PC 1 (`10.10.10.30`). Hemos decidido ponerlo en el PC 2, en RED-CIVEX (`10.10.20.30`).
 
 <img src="../img/Esquemadered.png" height="600" width="auto">
 

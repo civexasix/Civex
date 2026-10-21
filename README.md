@@ -64,7 +64,7 @@ Analizar → Prevenir → Atacar → Detectar → Informar → Corregir → Recu
  Monitorización
 ```
 
-> ⚠️ **Esquema pendiente de actualizar:** la imagen `img/Esquemadered.png` todavía muestra WAZUH-01 en el PC 1 (`10.10.10.30`). Ahora está en el **PC 2**, en RED-CIVEX (`10.10.20.30`). Los documentos de `docs/` ya reflejan el cambio.
+> ⚠️ **Esquema pendiente de actualizar:** la imagen `img/Esquemadered.png` todavía muestra WAZUH-01 en el PC 1 (`10.10.10.30`). Hemos decidido ponerlo en el **PC 2**, en RED-CIVEX (`10.10.20.30`). Los documentos de `docs/` ya reflejan el cambio.
 
 > 💡 **¿Qué es una DMZ?** Es una zona intermedia donde se pone lo que tiene que ser visible desde fuera (la web de citas), para que, si alguien la hackea, **no llegue directamente** a los datos de los pacientes.
 
@@ -109,7 +109,7 @@ Más detalle:
 
 ## 8. Estado del proyecto
 
-Esta es una **primera entrega provisional**: presentamos la idea y el diseño. La implementación está en marcha.
+Esta es una **primera entrega provisional**: presentamos la idea y el diseño. **Todavía no hay nada montado**: las máquinas y las pruebas están por hacer.
 
 - [x] Idea y alcance del proyecto
 - [x] Diseño de redes y direccionamiento (v1)
