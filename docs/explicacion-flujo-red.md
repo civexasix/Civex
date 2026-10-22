@@ -3,7 +3,7 @@
 Este documento explica **cómo viaja la información** por la red del proyecto, paso a paso y con ejemplos, pensado para que lo entienda cualquier persona aunque no sepa de redes.
 
 > Los detalles técnicos (IPs completas, tablas de máquinas y reglas) están en [`arquitectura.md`](arquitectura.md).
-> `<RED_AULA>` es el prefijo de la red real de clase (por ejemplo `192.168.1`). Se confirmará al montar los equipos.
+> La red del aula es `192.168.111.0/24` (router en `192.168.111.1`), así que las IPs de aula de las máquinas empiezan por `192.168.111`.
 
 ---
 
@@ -53,7 +53,7 @@ La **red del aula** hace de "Internet": los tres PCs están conectados a ella y 
 
 | Red | Rango | Dónde está | Quién la gestiona |
 |-----|-------|-----------|-------------------|
-| **Aula** ("Internet") | `<RED_AULA>.0/24` | Switch de clase | Router del aula |
+| **Aula** ("Internet") | `192.168.111.0/24` | Switch de clase | Router del aula |
 | **LAN-CLIENTE** | `10.10.10.0/24` | PC 1 (Proxmox) | FW-01 (`10.10.10.1`) |
 | **DMZ** | `10.10.11.0/24` | PC 1 (Proxmox) | FW-01 (`10.10.11.1`) |
 | **RED-CIVEX** | `10.10.20.0/24` | PC 2 (VirtualBox): CIVEX-01 y WAZUH-01 | Privada, sin gateway |
@@ -121,9 +121,9 @@ CIVEX-01 y KALI-01 tienen **dos adaptadores de red**, y cada uno cumple una func
 
 | VM | Adaptador 1 (puente) | Adaptador 2 (solo anfitrión) |
 |----|----------------------|------------------------------|
-| **CIVEX-01** | `<RED_AULA>.211` | `10.10.20.10` |
+| **CIVEX-01** | `192.168.111.211` | `10.10.20.10` |
 | **WAZUH-01** | — (no tiene) | `10.10.20.30` |
-| **KALI-01** | `<RED_AULA>.221` | `10.10.30.10` |
+| **KALI-01** | `192.168.111.221` | `10.10.30.10` |
 
 **Aclaraciones importantes:**
 
@@ -152,7 +152,7 @@ Como RED-CIVEX no sale a Internet, habrá que decidir cómo instalar y actualiza
 
 ### Flujo 1 · Un visitante entra en la web de citas
 
-1. Alguien de la red del aula abre `http://<RED_AULA>.202`.
+1. Alguien de la red del aula abre `http://192.168.111.202`.
 2. La petición llega a **FW-01** (puerto 80 o 443).
 3. FW-01 la **redirige (DNAT)** a **WEB-01** (`10.10.11.10`), en la DMZ.
 4. WEB-01 responde y la respuesta vuelve por el mismo camino.
@@ -182,7 +182,7 @@ Como RED-CIVEX no sale a Internet, habrá que decidir cómo instalar y actualiza
 
 1. Todas las máquinas Linux llevarán un **agente de Wazuh**.
 2. Los agentes del cliente (LAN-CLIENTE y DMZ) enviarán sus registros a **WAZUH-01** (`10.10.20.30`, en el PC 2), puertos 1514 y 1515.
-3. Los registros saldrán por **FW-01** hacia **CIVEX-01** (`<RED_AULA>.211`), que los pasará a WAZUH-01 y solo aceptará los que vengan de FW-01.
+3. Los registros saldrán por **FW-01** hacia **CIVEX-01** (`192.168.111.211`), que los pasará a WAZUH-01 y solo aceptará los que vengan de FW-01.
 4. FW-01 llevará además **Suricata**, que vigila el tráfico. Sus avisos también los recogerá el agente de Wazuh de FW-01, por el mismo camino.
 5. **CIVEX-01** está en la misma red que WAZUH-01 (RED-CIVEX), así que le enviará sus logs directamente.
 
@@ -194,7 +194,7 @@ Como RED-CIVEX no sale a Internet, habrá que decidir cómo instalar y actualiza
 
 ### Flujo 7 · El ataque controlado de Kali
 
-1. Desde **KALI-01** se lanza un escaneo o un ataque contra `<RED_AULA>.202`.
+1. Desde **KALI-01** se lanza un escaneo o un ataque contra `192.168.111.202`.
 2. Kali **solo ve el firewall**. Las IPs `10.10.10.x` y `10.10.11.x` no son alcanzables desde fuera.
 3. Solo puede llegar a la web (80/443) y, si fuera administrador, a SSH (22).
 4. Suricata y Wazuh **registran la actividad**.
@@ -226,8 +226,8 @@ La regla clave del firewall es **DMZ → LAN-CLIENTE: bloqueado** (salvo WEB-01 
 
 | Prueba | Resultado esperado |
 |--------|--------------------|
-| Desde Kali: `curl http://<RED_AULA>.202` | Se muestra la web de WEB-01. |
-| Desde Kali: `nmap <RED_AULA>.202` | Solo aparecen los puertos 22, 80 y 443. |
+| Desde Kali: `curl http://192.168.111.202` | Se muestra la web de WEB-01. |
+| Desde Kali: `nmap 192.168.111.202` | Solo aparecen los puertos 22, 80 y 443. |
 | Desde Kali: `ping 10.10.10.20` | **Falla**: la red del cliente no está expuesta. |
 | WEB-01 → CLINICA-01 puerto 3306 | Funciona. |
 | CLINICA-01 y WEB-01 → `10.10.20.30` puerto 1514 | Funciona (los agentes llegan a Wazuh). |
@@ -263,8 +263,6 @@ Porque, según su documentación, Wazuh necesita mucha memoria (se recomiendan 8
 
 ---
 
-> ⚠️ **Esquema pendiente de actualizar:** la imagen todavía muestra WAZUH-01 en el PC 1 (`10.10.10.30`). Hemos decidido ponerlo en el PC 2, en RED-CIVEX (`10.10.20.30`).
-
-<img src="../img/Esquemadered.png" height="600" width="auto">
+![Esquema de red de CIVEX](../img/Esquemadered.png)
 
 *Documento del proyecto CIVEX · Versión 0.1 (provisional)*

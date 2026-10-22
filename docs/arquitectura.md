@@ -2,7 +2,7 @@
 
 Resumen del diseño técnico de CIVEX. Es la **versión 1**: puede cambiar durante el montaje.
 
-> `<RED_AULA>` = prefijo de la red real de clase (por ejemplo `192.168.1`). Se confirmará al montar los equipos.
+> La red del aula es `192.168.111.0/24`, con el router en `192.168.111.1`.
 
 ## 1. Idea general
 
@@ -17,7 +17,7 @@ Resumen del diseño técnico de CIVEX. Es la **versión 1**: puede cambiar duran
 
 | Red | Rango | Dónde está | Gateway |
 |-----|-------|-----------|---------|
-| Aula (Internet) | `<RED_AULA>.0/24` | Switch de clase | Router del aula |
+| Aula (Internet) | `192.168.111.0/24` | Switch de clase | Router del aula |
 | LAN-CLIENTE | `10.10.10.0/24` | PC 1 (Proxmox) | `10.10.10.1` (FW-01) |
 | DMZ | `10.10.11.0/24` | PC 1 (Proxmox) | `10.10.11.1` (FW-01) |
 | RED-CIVEX | `10.10.20.0/24` | PC 2 (VirtualBox): CIVEX-01 y WAZUH-01 | — |
@@ -27,15 +27,15 @@ Resumen del diseño técnico de CIVEX. Es la **versión 1**: puede cambiar duran
 
 | Nombre | PC | Tipo | SO | IP | Función |
 |--------|----|------|----|----|---------|
-| pve01 | PC 1 | Host físico | Proxmox VE 8 | `<RED_AULA>.201` | Gestiona las VMs |
-| FW-01 | PC 1 | VM | Debian 12 | WAN `<RED_AULA>.202` · `10.10.10.1` · `10.10.11.1` | Firewall (nftables) + Suricata |
+| pve01 | PC 1 | Host físico | Proxmox VE 8 | `192.168.111.201` | Gestiona las VMs |
+| FW-01 | PC 1 | VM | Debian 12 | WAN `192.168.111.202` · `10.10.10.1` · `10.10.11.1` | Firewall (nftables) + Suricata |
 | DNS-01 | PC 1 | LXC | Debian 12 | `10.10.10.10` | Servidor DNS (`sonrisaviva.local`) |
 | CLINICA-01 | PC 1 | VM | Ubuntu Server 24.04 | `10.10.10.20` | Servidor interno con base de datos (datos ficticios) |
 | WEB-01 | PC 1 | VM | Ubuntu Server 24.04 | `10.10.11.10` | Web de citas (en la DMZ) |
 | MON-01 | PC 1 | LXC | Debian 12 | `10.10.10.40` | Prometheus + Grafana |
-| CIVEX-01 | PC 2 | VM | Ubuntu Server 24.04 | `<RED_AULA>.211` · `10.10.20.10` | Plataforma web, Firebase, informes, backups. Reenvía los logs del cliente hacia WAZUH-01 |
+| CIVEX-01 | PC 2 | VM | Ubuntu Server 24.04 | `192.168.111.211` · `10.10.20.10` | Plataforma web, Firebase, informes, backups. Reenvía los logs del cliente hacia WAZUH-01 |
 | WAZUH-01 | PC 2 | VM | Ubuntu Server 24.04 | `10.10.20.30` (solo RED-CIVEX, sin gateway) | SOC / Wazuh |
-| KALI-01 | PC 3 | VM | Kali Linux | `<RED_AULA>.221` · `10.10.30.10` | Pruebas de seguridad |
+| KALI-01 | PC 3 | VM | Kali Linux | `192.168.111.221` · `10.10.30.10` | Pruebas de seguridad |
 
 ## 4. Firewall (FW-01): reglas principales
 
@@ -57,7 +57,7 @@ Política por defecto: **bloquear todo lo que no esté permitido** y registrar l
 WAZUH-01 está en RED-CIVEX, una red privada del PC 2 que el PC 1 no ve directamente. Por eso la idea es que los logs pasen por CIVEX-01, que está en la red del aula y en RED-CIVEX:
 
 ```
-Agentes (LAN-CLIENTE, DMZ, FW-01) ──► FW-01 ──► CIVEX-01 (<RED_AULA>.211) ──► WAZUH-01 (10.10.20.30)
+Agentes (LAN-CLIENTE, DMZ, FW-01) ──► FW-01 ──► CIVEX-01 (192.168.111.211) ──► WAZUH-01 (10.10.20.30)
 ```
 
 | Máquina | Qué se espera de ella |
@@ -73,7 +73,7 @@ Agentes (LAN-CLIENTE, DMZ, FW-01) ──► FW-01 ──► CIVEX-01 (<RED_AULA>
 
 ## 5. Pruebas previstas para validar el diseño
 
-1. Desde Kali, `curl http://<RED_AULA>.202` debe mostrar la web de WEB-01.
+1. Desde Kali, `curl http://192.168.111.202` debe mostrar la web de WEB-01.
 2. Desde Kali, un escaneo (`nmap`) solo debe ver los puertos 22, 80 y 443.
 3. Desde Kali, `ping 10.10.10.20` debe **fallar**: la red del cliente no está expuesta.
 4. Desde CLINICA-01 y WEB-01 debe poder llegarse a WAZUH-01 (`10.10.20.30`) por el puerto 1514.
@@ -81,6 +81,8 @@ Agentes (LAN-CLIENTE, DMZ, FW-01) ──► FW-01 ──► CIVEX-01 (<RED_AULA>
 6. Desde Kali **no** debe poder llegarse a WAZUH-01.
 7. Las alertas de las pruebas, y los logs de los agentes del PC 1 y de CIVEX-01, deben aparecer en el dashboard de Wazuh.
 
-> ⚠️ **Esquema pendiente de actualizar:** la imagen todavía muestra WAZUH-01 en el PC 1 (`10.10.10.30`). Hemos decidido ponerlo en el PC 2, en RED-CIVEX (`10.10.20.30`).
+## 6. Esquema
 
-<img src="../img/Esquemadered.png" height="600" width="auto">
+Topología lógica completa (el fichero editable está en [`img/Esquemadered.drawio`](../img/Esquemadered.drawio)):
+
+![Esquema de red de CIVEX](../img/Esquemadered.png)

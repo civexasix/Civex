@@ -64,7 +64,9 @@ Analizar → Prevenir → Atacar → Detectar → Informar → Corregir → Recu
  Monitorización
 ```
 
-> ⚠️ **Esquema pendiente de actualizar:** la imagen `img/Esquemadered.png` todavía muestra WAZUH-01 en el PC 1 (`10.10.10.30`). Hemos decidido ponerlo en el **PC 2**, en RED-CIVEX (`10.10.20.30`). Los documentos de `docs/` ya reflejan el cambio.
+![Esquema de red de CIVEX](img/Esquemadered.png)
+
+*Topología lógica completa. El fichero editable (draw.io) está en [`img/Esquemadered.drawio`](img/Esquemadered.drawio).*
 
 > 💡 **¿Qué es una DMZ?** Es una zona intermedia donde se pone lo que tiene que ser visible desde fuera (la web de citas), para que, si alguien la hackea, **no llegue directamente** a los datos de los pacientes.
 
@@ -126,10 +128,13 @@ Esta es una **primera entrega provisional**: presentamos la idea y el diseño. *
 ```
 CIVEX/
 ├── README.md                 ← Estás aquí: presentación del proyecto
-└── docs/
-    ├── explicacion-flujo-red.md   ← Cómo funciona la red, paso a paso
-    ├── arquitectura.md       ← Redes, IPs, máquinas y firewall
-    └── optimizacion-recursos.md   ← RAM del PC 1 y Wazuh en el PC 2
+├── docs/
+│   ├── explicacion-flujo-red.md   ← Cómo funciona la red, paso a paso
+│   ├── arquitectura.md       ← Redes, IPs, máquinas y firewall
+│   └── optimizacion-recursos.md   ← RAM del PC 1 y Wazuh en el PC 2
+└── img/
+    ├── Esquemadered.png      ← Esquema de red (imagen)
+    └── Esquemadered.drawio   ← Esquema de red (editable con draw.io)
 ```
 
 ## 10. Aviso

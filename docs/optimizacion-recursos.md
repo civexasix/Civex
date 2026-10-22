@@ -108,6 +108,6 @@ A tener presente:
 - [ ] Cómo hacer copia de seguridad de WAZUH-01 al estar fuera de Proxmox.
 - [ ] Probar el presupuesto de RAM del PC 1 cuando esté montado.
 - [ ] Comprobar si el disco del PC 1 usa ZFS.
-- [ ] Actualizar `img/Esquemadered.png` con la nueva ubicación de WAZUH-01.
+- [x] Actualizar `img/Esquemadered.png` con la nueva ubicación de WAZUH-01.
 
 *Documento del proyecto CIVEX · Optimización de recursos · Versión 0.1 (provisional)*
