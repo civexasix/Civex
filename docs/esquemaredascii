@@ -1,0 +1,149 @@
+                         ┌────────────────────────────────────────────┐
+                         │          RED DEL AULA / INTERNET           │
+                         │   192.168.111.0/24  ·  GW 192.168.111.1    │
+                         └───────┬──────────────────┬──────────────┬──┬──────────┘
+                                 │                  │              │  │
+                    (puente)     │                  │ (puente)     │  │ (puente)
+                  vmbr0 .202     │          Adap.1 .211            │  │ Adap.1 .221
+                                 │                  │              │  │
+┌────────────────────────────────┼──────┐  ┌────────┼──────────────┼──┼────────────┐  ┌──────────┼───────────────────┐
+│ PC 1 · FELIPE · Proxmox VE     │      │  │ PC 2 · MARC · VirtualBox│  │            │  │ PC 3 · ALEJANDRO · VirtualBox  │
+│ pve01 · 192.168.111.201/24     │      │  │        │                │  │            │  │          │                     │
+│                                │      │  │ ┌──────┼─────────────────────────────┐ │  │ ┌────────┼───────────────────┐ │
+│                                │      │  │ │ ZONA CIVEX · SOC               │ │  │ │ ZONA KALI                      │ │
+│                                │      │  │ │ RED-CIVEX 10.10.20.0/24        │ │  │ │ RED-KALI 10.10.30.0/24         │ │
+│                                │      │  │ │ host-only vboxnet0 · host .1   │ │  │ │ host-only vboxnet0 · host .1   │ │
+│    ┌───────────────────────┐   │      │  │ │ sin gateway                    │ │  │ │ sin gateway                    │ │
+│    │ FW-01                 │◄──┘      │  │ │                                │ │  │ │                                │ │
+│    │ nftables + Suricata   │◄═══════════════╪════════════ ATAQUES CONTROLADOS ═╪═╪══╪═╪══ (Kali → 192.168.111.202) ═══╗ │ │
+│    │ WAN ens18 .202        │          │  │ │ ┌────────────────────────────┐ │ │  │ │ ┌──────────────────────────┐   ║ │ │
+│    │ DNAT 80/443 → WEB-01  │          │  │ │ │ CIVEX-01                   │ │ │  │ │ │ KALI-01                  │═══╝ │ │
+│    │ Debian 12·2vCPU/2GB   │          │  │ │ │ Ubuntu 24.04·2vCPU/4GB     │ │ │  │ │ │ Kali Linux·2vCPU/4GB     │     │ │
+│    └──┬─────────────┬──────┘          │  │ │ │ eth0 192.168.111.211(punte)│ │ │  │ │ │ eth0 192.168.111.221     │     │ │
+│       │ logs Wazuh  │                 │  │ │ │ eth1 10.10.20.10 (host-only)│ │ │  │ │ │ eth1 10.10.30.10         │     │ │
+│       │ 1514/1515 ──┼─────────────────┼──┼►│ │ Web · Firebase·reenvía logs │ │ │  │ │ └────────────┬─────────────┘     │ │
+│       │ (→ .211 →   │                 │  │ │ └─────────────┬──────────────┘ │ │  │ │              ┊ Adap.2 .10        │ │
+│       │  WAZUH-01)  │                 │  │ │               ┊ Adap.2 .10      │ │  │ │              ┊ solo anfitrión    │ │
+│       │             │                 │  │ │               ┊ solo anfitrión  │ │  │ │ ┌────────────┴─────────────┐     │ │
+│       │             │                 │  │ │ ┌─────────────┴──────────────┐ │ │  │ │ │ RED-KALI 10.10.30.0/24   │     │ │
+│       │             │                 │  │ │ │ RED-CIVEX 10.10.20.0/24    │ │ │  │ │ └──────────────────────────┘     │ │
+│       │             │                 │  │ │ └─────────────┬──────────────┘ │ │  │ └────────────────────────────────┘ │
+│       │             │                 │  │ │               ┊ 10.10.20.30     │ │  └────────────────────────────────────┘
+│       │             │                 │  │ │               ┊ recibe 1514/1515│ │
+│       │             │                 │  │ │ ┌─────────────┴──────────────┐ │ │
+│       │             │                 │  │ │ │ WAZUH-01                   │ │ │
+│       │             │                 │  │ │ │ Ubuntu 24.04 · sin gateway │ │ │
+│       │             │                 │  │ │ │ Manager+Indexer+Dashboard  │ │ │
+│       │             │                 │  │ │ │ eth0 10.10.20.30(host-only)│ │ │
+│       │             │                 │  │ │ └────────────────────────────┘ │ │
+│       │             │                 │  │ └────────────────────────────────┘ │
+│       │             │                 │  └────────────────────────────────────┘
+│  vmbr1│ 10.10.10.1  │ vmbr2 10.10.11.1│
+│  ┊    │             │ ┊               │
+│  ┊    │             │ ┊               │
+│ ┌┴────┴─────────────┴─┴─────────────┐ │
+│ │                                   │ │
+│ │ ┌─────────────────────────────────┴─┴──────────────────────┐   ┌──────────────────────────────────┐
+│ │ │ LAN-CLIENTE · vmbr1                                      │   │ DMZ · vmbr2                      │
+│ │ │ 10.10.10.0/24 · GW 10.10.10.1 (FW-01)                    │   │ 10.10.11.0/24 · GW 10.10.11.1    │
+│ │ │                                                          │   │ (FW-01)                          │
+│ │ │ ┌────────────────┐     ┌──────────────────────┐          │   │                                  │
+│ │ │ │ DNS-01         │     │ CLINICA-01           │◄─────────┼───┼─── 3306 ── ┌──────────────────┐  │
+│ │ │ │ 10.10.10.10    │     │ 10.10.10.20          │  (MariaDB)  │   │            │ WEB-01           │  │
+│ │ │ │ Debian 12 LXC  │     │ Ubuntu 24.04         │          │   │            │ 10.10.11.10      │  │
+│ │ │ │ DNS 1.1.1.1    │     │ MariaDB :3306        │          │   │            │ Ubuntu 24.04     │  │
+│ │ │ │     9.9.9.9    │     │ (historiales ficticios)         │   │            │ nginx·citas web  │  │
+│ │ │ └────────────────┘     └──────────────────────┘          │   │            └──────────────────┘  │
+│ │ │                                                          │   │                                  │
+│ │ │        ┌──────────────────────┐                          │   └──────────────────────────────────┘
+│ │ │        │ MON-01               │                          │
+│ │ │        │ 10.10.10.40          │                          │   Notas PC 1:
+│ │ │        │ Debian 12 LXC        │                          │   • Backups vzdump: 3 diarias + 2 semanales
+│ │ │        │ Prometheus + Grafana │                          │   • WAZUH-01 vive en PC 2
+│ │ │        └──────────────────────┘                          │   • DMZ → LAN-CLIENTE bloqueado (salvo 3306)
+│ │ │ Dominio: sonrisaviva.local · agentes Wazuh + node_exporter│   • Todo el tráfico pasa por FW-01
+│ │ └──────────────────────────────────────────────────────────┘
+└─┴─────────────────────────────────────────┘
+
+Explicación detallada
+Datos generales
+Proyecto: CIVEX (ASIX), versión 1.2, 22/10/2026
+Cliente: Clínica Dental SonrisaViva
+Autores: Felipe, Marc, Alejandro
+Dominio interno: sonrisaviva.local
+Red del aula / Internet
+Red: 192.168.111.0/24, gateway 192.168.111.1
+Es la red física común a los tres PCs. Los tres se conectan a ella mediante adaptadores en modo puente.
+PC 1 · Felipe · Proxmox VE (físico)
+
+Host pve01: 192.168.111.201/24, bridge vmbr0.
+
+FW-01 (firewall / IDS)
+Dato	Valor
+SO / recursos	Debian 12 · 2 vCPU / 2 GB
+Software	nftables + Suricata IDS
+WAN (ens18, vmbr0)	192.168.111.202
+LAN-CLIENTE (vmbr1)	10.10.10.1
+DMZ (vmbr2)	10.10.11.1
+DNAT	puertos 80/443 → WEB-01
+Función	Todo el tráfico pasa por él. Envía logs a Wazuh (1514/1515) vía CIVEX-01
+LAN-CLIENTE · vmbr1 · 10.10.10.0/24 (GW 10.10.10.1)
+Máquina	IP	SO	Función
+DNS-01	10.10.10.10	Debian 12 (LXC)	DNS, con forwarders externos 1.1.1.1 y 9.9.9.9
+CLINICA-01	10.10.10.20	Ubuntu 24.04	MariaDB :3306 (historiales ficticios)
+MON-01	10.10.10.40	Debian 12 (LXC)	Prometheus + Grafana
+
+Todas las VMs llevan agente Wazuh (envía a WAZUH-01, 10.10.20.30) y node_exporter.
+
+DMZ · vmbr2 · 10.10.11.0/24 (GW 10.10.11.1)
+Máquina	IP	SO	Función
+WEB-01	10.10.11.10	Ubuntu 24.04	nginx, web de citas online
+Reglas y notas
+DMZ → LAN-CLIENTE bloqueado, salvo 3306 (WEB-01 → CLINICA-01, MariaDB).
+Backups con vzdump: 3 diarias + 2 semanales.
+WAZUH-01 ya no está en PC 1; vive en PC 2.
+PC 2 · Marc · VirtualBox · Zona CIVEX (SOC)
+
+Red RED-CIVEX 10.10.20.0/24, host-only vboxnet0, host en .1, sin gateway.
+
+Máquina	Interfaces	Recursos	Función
+CIVEX-01	eth0 192.168.111.211 (puente) · eth1 10.10.20.10 (host-only)	Ubuntu 24.04 · 2 vCPU / 4 GB	Web, Firebase, reenvía logs
+WAZUH-01	eth0 10.10.20.30 (host-only)	Ubuntu 24.04 · sin gateway	Wazuh Manager + Indexer + Dashboard
+CIVEX-01 hace de puente entre el aula y la red interna del SOC.
+Los logs de FW-01 llegan a CIVEX-01 (192.168.111.211) y de ahí a WAZUH-01 por los puertos 1514/1515.
+
+Notas PC 2:
+
+WAZUH-01 sin gateway: solo lo ve CIVEX-01.
+CIVEX-01 solo acepta logs de FW-01.
+Sin Internet: instalación/updates por decidir.
+Sin backup de Proxmox: por decidir.
+PC 3 · Alejandro · VirtualBox · Zona Kali
+
+Red RED-KALI 10.10.30.0/24, host-only vboxnet0, host en .1, sin gateway.
+
+Máquina	Interfaces	Recursos	Función
+KALI-01	eth0 192.168.111.221 (puente) · eth1 10.10.30.10 (host-only)	Kali Linux · 2 vCPU / 4 GB	Atacante
+Lanza ataques controlados contra 192.168.111.202 (WAN de FW-01).
+Flujos de tráfico principales
+Internet → web: 80/443 → FW-01 (DNAT) → WEB-01 (DMZ).
+Web → base de datos: WEB-01 → CLINICA-01 por 3306 (única excepción DMZ→LAN).
+Logs: FW-01 → CIVEX-01 (.211) → WAZUH-01 (10.10.20.30), puertos 1514/1515. Los agentes Wazuh de las VMs también envían ahí.
+Monitorización: MON-01 (Prometheus) recoge métricas de node_exporter en todas las VMs.
+Ataques: KALI-01 (.221) → FW-01 (.202); Suricata/nftables los detectan o bloquean y generan alertas en Wazuh.
+Tabla resumen de IPs
+Dispositivo	IP	Red
+Gateway aula	192.168.111.1	Aula
+pve01 (Proxmox)	192.168.111.201	Aula
+FW-01 (WAN)	192.168.111.202	Aula
+CIVEX-01 (eth0)	192.168.111.211	Aula
+KALI-01 (eth0)	192.168.111.221	Aula
+FW-01 (vmbr1)	10.10.10.1	LAN-CLIENTE
+DNS-01	10.10.10.10	LAN-CLIENTE
+CLINICA-01	10.10.10.20	LAN-CLIENTE
+MON-01	10.10.10.40	LAN-CLIENTE
+FW-01 (vmbr2)	10.10.11.1	DMZ
+WEB-01	10.10.11.10	DMZ
+CIVEX-01 (eth1)	10.10.20.10	RED-CIVEX
+WAZUH-01	10.10.20.30	RED-CIVEX
+KALI-01 (eth1)	10.10.30.10	RED-KALI
