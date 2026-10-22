@@ -66,7 +66,7 @@ Analizar → Prevenir → Atacar → Detectar → Informar → Corregir → Recu
 
 ![Esquema de red de CIVEX](img/Esquemadered.png)
 
-*Topología lógica completa. El fichero editable (draw.io) está en [`img/Esquemadered.drawio`](img/Esquemadered.drawio).*
+*Topología lógica completa.*
 
 > 💡 **¿Qué es una DMZ?** Es una zona intermedia donde se pone lo que tiene que ser visible desde fuera (la web de citas), para que, si alguien la hackea, **no llegue directamente** a los datos de los pacientes.
 
@@ -133,8 +133,7 @@ CIVEX/
 │   ├── arquitectura.md       ← Redes, IPs, máquinas y firewall
 │   └── optimizacion-recursos.md   ← RAM del PC 1 y Wazuh en el PC 2
 └── img/
-    ├── Esquemadered.png      ← Esquema de red (imagen)
-    └── Esquemadered.drawio   ← Esquema de red (editable con draw.io)
+    └── Esquemadered.png      ← Esquema de red (imagen)
 ```
 
 ## 10. Aviso

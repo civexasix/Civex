@@ -83,6 +83,6 @@ Agentes (LAN-CLIENTE, DMZ, FW-01) ──► FW-01 ──► CIVEX-01 (192.168.11
 
 ## 6. Esquema
 
-Topología lógica completa (el fichero editable está en [`img/Esquemadered.drawio`](../img/Esquemadered.drawio)):
+Topología lógica completa:
 
 ![Esquema de red de CIVEX](../img/Esquemadered.png)
