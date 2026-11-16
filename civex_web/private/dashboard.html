@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CIVEX - Dashboard</title>
+
+    <link rel="stylesheet" href="dashboard.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Orbitron:wght@400..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+  </head>
+
+  <body>
+    <div class="app" id="app">
+      <!-- ========== SIDEBAR ========== -->
+      <aside class="sidebar" id="sidebar">
+        <div class="brand">
+          <a href="../index.html" class="brand__logo" aria-label="Ir a la web">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 966 1629"
+              role="img"
+              aria-label="CIVEX"
+            >
+              <path
+                fill="currentColor"
+                d="m 0,1432.967 0,-152.0331 4.6291601,-12.1667 C 10.987782,1252.0551 20.010492,1231.9438 30.964896,1210.0658 73.903413,1124.3095 137.89175,1046.1943 208.5,993.3359 271.57638,946.11598 340.74385,914.62121 410,901.58473 c 13.6661,-2.57245 37.94542,-5.97575 38.51552,-5.39883 1.19324,1.20752 83.83466,140.1663 113.18335,190.3141 25.40397,43.4075 50.30113,86.8304 50.30113,87.7298 0,0.2699 -10.4625,0.2711 -23.25,0 -52.43337,-1.1005 -97.42502,7.0828 -141.98091,25.824 -48.31521,20.3226 -87.61442,47.6181 -125.26909,87.0065 -51.67459,54.0539 -88.78901,129.0431 -101.9245,205.937 -4.36417,25.5475 -4.95909,33.2665 -4.87479,63.25 l 0.0808,28.75 H 107.39077 0 Z m 881.60002,144.7763 c -2.14499,-3.9838 -9.40306,-17.1433 -16.12905,-29.2433 -6.72599,-12.1 -27.74618,-50.125 -46.71154,-84.5 -40.48622,-73.3819 -36.11691,-65.5089 -75.75441,-136.5 -34.51476,-61.8162 -43.73374,-78.3715 -51.50951,-92.5 -2.87564,-5.225 -17.50091,-31.55 -32.50061,-58.5 -14.99969,-26.95 -29.62311,-53.275 -32.49649,-58.5 -2.87338,-5.225 -18.26917,-32.9 -34.21286,-61.5 -15.94369,-28.6 -36.75154,-65.95 -46.23966,-83 -9.48813,-17.05 -23.89975,-42.925 -32.02584,-57.5 -8.12608,-14.575 -24.12012,-43.375 -35.54231,-64 -29.27682,-52.86505 -43.0987,-77.64316 -88.9733,-159.5 C 362.80058,644.85068 280.00888,500.55917 245.48546,441.5 225.1017,406.62954 195.58099,355.98188 159.51298,294 112.32722,212.91258 90.333772,175.85737 43.774276,99 33.612133,82.225 19.605681,59.104658 12.648826,47.621463 2.4286333,30.751702 0,26.025055 0,23.004105 l 0,-3.738821 166.75,-0.50772 C 310.80964,18.31893 333.63607,18.444917 334.5,19.683431 340.71748,28.596735 410.42624,140.21005 453.67562,210.5 c 40.48844,65.80281 52.61208,85.60533 105.30301,172 16.101,26.4 31.77041,52.05 34.82092,57 5.80749,9.42373 22.14775,36.3332 57.6869,95 11.66125,19.25 23.14523,38.15 25.51995,42 10.76748,17.45674 92.21938,152.74704 206.60101,343.16097 L 966,1056.8219 V 1320.911 1585 l -40.25,-0.01 -40.25,-0.01 z M 786.1834,672.20049 C 759.60926,625.61522 730.11195,574 720.63381,557.5 711.15567,541 700.31098,522.1 696.5345,515.5 692.75802,508.9 685.69283,496.67768 680.83409,488.33929 675.97534,480.0009 672,472.90285 672,472.56585 c 0,-0.337 13.34205,-20.51469 29.64899,-44.83929 28.7571,-42.89616 103.75759,-157.15917 124.72966,-190.02527 5.68598,-8.91071 16.98576,-26.55129 25.11063,-39.20129 13.91511,-21.66513 27.07654,-42.64883 78.72758,-125.518035 11.833,-18.984918 24.61247,-39.234918 28.39884,-45 L 965.5,17.5 l 0.25185,266.70441 0.25184,266.70442 -8.8213,13.79558 C 952.33068,572.29199 941.44956,589.525 933.00214,603 c -8.44743,13.475 -21.05526,33.5 -28.0174,44.5 -6.96215,11 -19.76497,31.25 -28.45072,45 -36.02102,57.02317 -40.82408,64.49775 -41.41501,64.45049 -0.34046,-0.0272 -22.36148,-38.16473 -48.93561,-84.75 z"
+              />
+            </svg>
+            <span class="brand__name">CIVEX</span>
+          </a>
+
+          <button
+            class="burger burger--desktop"
+            type="button"
+            data-toggle-menu
+            aria-label="Mostrar u ocultar el menú"
+          >
+            <i class="fa-solid fa-bars"></i>
+          </button>
+        </div>
+
+        <nav class="menu" aria-label="Navegación del dashboard">
+          <ul>
+            <li>
+              <a href="#" class="is-active"
+                ><i class="fa-solid fa-chart-pie"></i><span>Resumen</span></a
+              >
+            </li>
+            <li>
+              <a href="#"
+                ><i class="fa-solid fa-server"></i><span>Infraestructura</span></a
+              >
+            </li>
+            <li>
+              <a href="#"
+                ><i class="fa-solid fa-chart-line"></i
+                ><span>Monitorización</span></a
+              >
+            </li>
+            <li>
+              <a href="#"
+                ><i class="fa-solid fa-shield-halved"></i
+                ><span>Seguridad</span></a
+              >
+            </li>
+          </ul>
+
+          <ul>
+            <li>
+              <a href="#"
+                ><i class="fa-solid fa-bug"></i><span>Vulnerabilidades</span></a
+              >
+            </li>
+            <li>
+              <a href="#"
+                ><i class="fa-solid fa-triangle-exclamation"></i
+                ><span>Incidencias</span></a
+              >
+            </li>
+            <li>
+              <a href="#"
+                ><i class="fa-solid fa-database"></i><span>Backups</span></a
+              >
+            </li>
+            <li>
+              <a href="#"
+                ><i class="fa-solid fa-file-lines"></i><span>Informes</span></a
+              >
+            </li>
+          </ul>
+        </nav>
+
+        <div class="usuario">
+          <span class="usuario__avatar" id="usuario-inicial" aria-hidden="true">U</span>
+          <div class="usuario__info">
+            <strong id="usuario-nombre">Usuario</strong>
+            <a href="login.html">Cerrar sesión</a>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ========== CABECERA ========== -->
+      <header class="topbar">
+        <button
+          class="burger burger--mobile"
+          type="button"
+          data-toggle-menu
+          aria-label="Abrir menú"
+        >
+          <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <div class="topbar__title">
+          <h1 id="saludo">Bienvenido, Usuario!</h1>
+          <p id="cliente-nombre">Cliente</p>
+        </div>
+
+        <time class="topbar__date" id="fecha-hoy"></time>
+      </header>
+
+      <!-- ========== CONTENIDO ========== -->
+      <main class="main">
+        <div class="intro">
+          <p>
+            Estado de tu infraestructura: máquinas en funcionamiento, alertas
+            del SOC, vulnerabilidades pendientes y copias de seguridad.
+          </p>
+          <button class="btn-export" type="button" id="btn-export">
+            <i class="fa-solid fa-download"></i> Exportar PDF
+          </button>
+        </div>
+
+        <!-- KPIs -->
+        <section class="kpis" aria-label="Indicadores principales">
+          <article class="card kpi">
+            <div class="kpi__top">
+              <span class="chip"><i class="fa-solid fa-server"></i></span>
+              <span class="kpi__num" id="kpi-maquinas">–</span>
+            </div>
+            <p>Máquinas activas</p>
+          </article>
+
+          <article class="card kpi">
+            <div class="kpi__top">
+              <span class="chip chip--verde"
+                ><i class="fa-solid fa-shield-halved"></i
+              ></span>
+              <span class="kpi__num" id="kpi-alertas">–</span>
+            </div>
+            <p>Alertas pendientes</p>
+          </article>
+
+          <article class="card kpi">
+            <div class="kpi__top">
+              <span class="chip chip--verde"
+                ><i class="fa-solid fa-bug"></i
+              ></span>
+              <span class="kpi__num" id="kpi-vulnerabilidades">–</span>
+            </div>
+            <p>Vulnerabilidades abiertas</p>
+          </article>
+
+          <article class="card kpi">
+            <div class="kpi__top">
+              <span class="chip"><i class="fa-solid fa-database"></i></span>
+              <span class="kpi__num" id="kpi-backups">–</span>
+            </div>
+            <p>Backups correctos</p>
+          </article>
+        </section>
+
+        <!-- Línea + circular grande -->
+        <section class="row row--2-1">
+          <article class="card panel">
+            <header class="panel__head">
+              <h2>Rendimiento de la infraestructura</h2>
+              <ul class="legend">
+                <li><span class="dot dot--lila"></span>CPU (%)</li>
+                <li><span class="dot dot--verde"></span>RAM (%)</li>
+              </ul>
+            </header>
+            <div class="chart chart--line">
+              <canvas id="chart-lineas" aria-label="Gráfico de líneas de CPU y RAM"></canvas>
+            </div>
+          </article>
+
+          <article class="card panel">
+            <header class="panel__head">
+              <h2>Vulnerabilidades por riesgo</h2>
+            </header>
+            <div class="chart chart--donut">
+              <canvas id="chart-severidad" aria-label="Gráfico circular de vulnerabilidades por riesgo"></canvas>
+            </div>
+            <ul class="legend legend--col">
+              <li><span class="dot dot--lila"></span>Crítica</li>
+              <li><span class="dot dot--verde"></span>Alta</li>
+              <li><span class="dot dot--lila-claro"></span>Media</li>
+              <li><span class="dot dot--gris"></span>Baja</li>
+            </ul>
+          </article>
+        </section>
+
+        <!-- 3 tarjetas con listas -->
+        <section class="row row--3">
+          <article class="card panel">
+            <header class="panel__head">
+              <h2>Últimas alertas</h2>
+            </header>
+            <ul class="lista" id="lista-alertas"></ul>
+          </article>
+
+          <article class="card panel">
+            <header class="panel__head">
+              <h2>Estado de los servicios</h2>
+            </header>
+            <ul class="lista" id="lista-servicios"></ul>
+          </article>
+
+          <article class="card panel">
+            <header class="panel__head">
+              <h2>Backups recientes</h2>
+            </header>
+            <ul class="lista" id="lista-backups"></ul>
+          </article>
+        </section>
+
+        <!-- 4 circulares -->
+        <section class="card panel panel--wide">
+          <header class="panel__head">
+            <h2>Estado general</h2>
+          </header>
+          <div class="donuts">
+            <figure class="mini">
+              <div class="mini__chart">
+                <canvas id="mini-1" aria-label="Porcentaje de máquinas activas"></canvas>
+              </div>
+              <figcaption>Máquinas activas</figcaption>
+            </figure>
+            <figure class="mini">
+              <div class="mini__chart">
+                <canvas id="mini-2" aria-label="Porcentaje de alertas resueltas"></canvas>
+              </div>
+              <figcaption>Alertas resueltas</figcaption>
+            </figure>
+            <figure class="mini">
+              <div class="mini__chart">
+                <canvas id="mini-3" aria-label="Porcentaje de vulnerabilidades corregidas"></canvas>
+              </div>
+              <figcaption>Vulnerabilidades corregidas</figcaption>
+            </figure>
+            <figure class="mini">
+              <div class="mini__chart">
+                <canvas id="mini-4" aria-label="Porcentaje de backups correctos"></canvas>
+              </div>
+              <figcaption>Backups correctos</figcaption>
+            </figure>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="overlay" id="overlay" hidden></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <script src="dashboard.js"></script>
+  </body>
+</html>
