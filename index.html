@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CIVEX - Empresa de ciberseguridad</title>
+    <meta
+      name="description"
+      content="CIVEX analiza y protege la infraestructura de tu empresa antes y después de un ataque: análisis, pruebas controladas, detección con Wazuh, informes y corrección."
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.css"
+    />
+    <link rel="stylesheet" href="assets/style.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Orbitron:wght@400..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+  </head>
+
+  <body>
+    <header>
+      <nav class="container nav">
+        <a href="#inicio" class="logo">
+          <svg
+            class="logo-img"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 966 1629"
+            role="img"
+            aria-label="CIVEX"
+          >
+            <path
+              fill="currentColor"
+              d="m 0,1432.967 0,-152.0331 4.6291601,-12.1667 C 10.987782,1252.0551 20.010492,1231.9438 30.964896,1210.0658 73.903413,1124.3095 137.89175,1046.1943 208.5,993.3359 271.57638,946.11598 340.74385,914.62121 410,901.58473 c 13.6661,-2.57245 37.94542,-5.97575 38.51552,-5.39883 1.19324,1.20752 83.83466,140.1663 113.18335,190.3141 25.40397,43.4075 50.30113,86.8304 50.30113,87.7298 0,0.2699 -10.4625,0.2711 -23.25,0 -52.43337,-1.1005 -97.42502,7.0828 -141.98091,25.824 -48.31521,20.3226 -87.61442,47.6181 -125.26909,87.0065 -51.67459,54.0539 -88.78901,129.0431 -101.9245,205.937 -4.36417,25.5475 -4.95909,33.2665 -4.87479,63.25 l 0.0808,28.75 H 107.39077 0 Z m 881.60002,144.7763 c -2.14499,-3.9838 -9.40306,-17.1433 -16.12905,-29.2433 -6.72599,-12.1 -27.74618,-50.125 -46.71154,-84.5 -40.48622,-73.3819 -36.11691,-65.5089 -75.75441,-136.5 -34.51476,-61.8162 -43.73374,-78.3715 -51.50951,-92.5 -2.87564,-5.225 -17.50091,-31.55 -32.50061,-58.5 -14.99969,-26.95 -29.62311,-53.275 -32.49649,-58.5 -2.87338,-5.225 -18.26917,-32.9 -34.21286,-61.5 -15.94369,-28.6 -36.75154,-65.95 -46.23966,-83 -9.48813,-17.05 -23.89975,-42.925 -32.02584,-57.5 -8.12608,-14.575 -24.12012,-43.375 -35.54231,-64 -29.27682,-52.86505 -43.0987,-77.64316 -88.9733,-159.5 C 362.80058,644.85068 280.00888,500.55917 245.48546,441.5 225.1017,406.62954 195.58099,355.98188 159.51298,294 112.32722,212.91258 90.333772,175.85737 43.774276,99 33.612133,82.225 19.605681,59.104658 12.648826,47.621463 2.4286333,30.751702 0,26.025055 0,23.004105 l 0,-3.738821 166.75,-0.50772 C 310.80964,18.31893 333.63607,18.444917 334.5,19.683431 340.71748,28.596735 410.42624,140.21005 453.67562,210.5 c 40.48844,65.80281 52.61208,85.60533 105.30301,172 16.101,26.4 31.77041,52.05 34.82092,57 5.80749,9.42373 22.14775,36.3332 57.6869,95 11.66125,19.25 23.14523,38.15 25.51995,42 10.76748,17.45674 92.21938,152.74704 206.60101,343.16097 L 966,1056.8219 V 1320.911 1585 l -40.25,-0.01 -40.25,-0.01 z M 786.1834,672.20049 C 759.60926,625.61522 730.11195,574 720.63381,557.5 711.15567,541 700.31098,522.1 696.5345,515.5 692.75802,508.9 685.69283,496.67768 680.83409,488.33929 675.97534,480.0009 672,472.90285 672,472.56585 c 0,-0.337 13.34205,-20.51469 29.64899,-44.83929 28.7571,-42.89616 103.75759,-157.15917 124.72966,-190.02527 5.68598,-8.91071 16.98576,-26.55129 25.11063,-39.20129 13.91511,-21.66513 27.07654,-42.64883 78.72758,-125.518035 11.833,-18.984918 24.61247,-39.234918 28.39884,-45 L 965.5,17.5 l 0.25185,266.70441 0.25184,266.70442 -8.8213,13.79558 C 952.33068,572.29199 941.44956,589.525 933.00214,603 c -8.44743,13.475 -21.05526,33.5 -28.0174,44.5 -6.96215,11 -19.76497,31.25 -28.45072,45 -36.02102,57.02317 -40.82408,64.49775 -41.41501,64.45049 -0.34046,-0.0272 -22.36148,-38.16473 -48.93561,-84.75 z"
+            />
+          </svg>
+        </a>
+
+        <div class="nav-links">
+          <a href="#nosotros">Nosotros</a>
+          <a href="#metodologia">Metodología</a>
+          <a href="#entorno">Entorno</a>
+          <a href="#contacto">Contacto</a>
+          <a href="private/login.html"
+            ><button class="btn-log">Área cliente</button></a
+          >
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <!-- HERO -->
+      <section class="hero" id="inicio">
+        <canvas id="hero-canvas" aria-hidden="true"></canvas>
+        <div class="container hero-content">
+          <h1>CIVEX<span style="color: var(--verde-claro)">.</span></h1>
+          <p>
+            Encontramos las debilidades de tu infraestructura antes que un
+            atacante y comprobamos que quedan solucionadas.
+          </p>
+          <a class="btn" href="#metodologia">Ver cómo trabajamos</a>
+        </div>
+      </section>
+
+      <!-- NOSOTROS -->
+      <section class="section" id="nosotros">
+        <div class="container split">
+          <div>
+            <img
+              src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80"
+              alt="Ciberseguridad"
+              style="
+                width: 100%;
+                border-radius: 12px;
+                box-shadow: 0 2px 8px #0002;
+              "
+            />
+          </div>
+
+          <div>
+            <span class="eyebrow">Sobre nosotros</span>
+            <h2>Protegemos antes, durante y después del ataque.</h2>
+            <p>
+              CIVEX es una empresa de ciberseguridad ficticia creada como
+              proyecto de ASIX. Analizamos la arquitectura de red, los sistemas
+              operativos y la configuración de nuestros clientes para encontrar
+              sus puntos vulnerables.
+            </p>
+            <p>
+              Después diseñamos un plan de ataque controlado, comprobamos si
+              esas vulnerabilidades existen de verdad y monitorizamos todo con
+              Wazuh/SOC para ver cómo responde la infraestructura.
+            </p>
+            <a class="btn" href="#metodologia">Ver metodología →</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- TECNOLOGÍAS -->
+      <section class="container tech">
+        <p class="tech-label">Tecnologías con las que trabajamos</p>
+        <div class="gallery-container">
+          <div class="gallery">
+            <img src="assets/img/logos/firebase-logo.webp" alt="Firebase" />
+            <img src="assets/img/logos/github-logo.webp" alt="GitHub" />
+            <img src="assets/img/logos/grafana-logo.webp" alt="Grafana" />
+            <img src="assets/img/logos/kali-logo.webp" alt="Kali Linux" />
+            <img src="assets/img/logos/netfilter-logo.webp" alt="Netfilter" />
+            <img src="assets/img/logos/suricata-logo.webp" alt="Suricata" />
+            <img src="assets/img/logos/prometheus-logo.webp" alt="Prometheus" />
+            <img src="assets/img/logos/Proxmox_logo.webp" alt="Proxmox" />
+            <img src="assets/img/logos/vbox-logo.webp" alt="VirtualBox" />
+            <img src="assets/img/logos/wazuh-logo.webp" alt="Wazuh" />
+            <!-- copia para el bucle infinito (oculta a lectores de pantalla) -->
+            <img
+              src="assets/img/logos/firebase-logo.webp"
+              alt=""
+              aria-hidden="true"
+            />
+            <img
+              src="assets/img/logos/github-logo.webp"
+              alt=""
+              aria-hidden="true"
+            />
+            <img
+              src="assets/img/logos/grafana-logo.webp"
+              alt=""
+              aria-hidden="true"
+            />
+            <img
+              src="assets/img/logos/kali-logo.webp"
+              alt=""
+              aria-hidden="true"
+            />
+            <img
+              src="assets/img/logos/netfilter-logo.webp"
+              alt=""
+              aria-hidden="true"
+            />
+            <img
+              src="assets/img/logos/suricata-logo.webp"
+              alt=""
+              aria-hidden="true"
+            />
+            <img
+              src="assets/img/logos/prometheus-logo.webp"
+              alt=""
+              aria-hidden="true"
+            />
+            <img
+              src="assets/img/logos/Proxmox_logo.webp"
+              alt=""
+              aria-hidden="true"
+            />
+            <img
+              src="assets/img/logos/vbox-logo.webp"
+              alt=""
+              aria-hidden="true"
+            />
+            <img
+              src="assets/img/logos/wazuh-logo.webp"
+              alt=""
+              aria-hidden="true"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- METODOLOGÍA (scroll horizontal) -->
+      <section class="cards-section" id="metodologia">
+        <div class="cards-viewport">
+          <div class="cards">
+            <div class="cards-intro">
+              <span class="eyebrow">Metodología</span>
+              <h2>Un servicio completo en siete pasos.</h2>
+              <p>
+                Analizar, prevenir, atacar, detectar, informar, corregir y
+                recuperar. Seguimos un playbook para que cada auditoría se haga
+                siempre igual de bien.
+              </p>
+            </div>
+
+            <article class="card">
+              <div class="card-top">
+                <span class="card-number">01</span>
+                <span class="card-icon"
+                  ><i class="fa-solid fa-magnifying-glass"></i
+                ></span>
+              </div>
+              <div class="card-content">
+                <h3>Analizar</h3>
+                <p>
+                  El cliente nos da su arquitectura de red, sistemas y
+                  configuración. Hacemos el inventario y buscamos posibles
+                  debilidades.
+                </p>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-top">
+                <span class="card-number">02</span>
+                <span class="card-icon"
+                  ><i class="fa-solid fa-shield-halved"></i
+                ></span>
+              </div>
+              <div class="card-content">
+                <h3>Prevenir</h3>
+                <p>
+                  Definimos un playbook que estandariza qué analizar, qué
+                  pruebas hacer y cómo verificar después las soluciones.
+                </p>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-top">
+                <span class="card-number">03</span>
+                <span class="card-icon"><i class="fa-solid fa-bug"></i></span>
+              </div>
+              <div class="card-content">
+                <h3>Atacar</h3>
+                <p>
+                  Diseñamos un plan de ataque controlado y lo ejecutamos desde
+                  Kali Linux para comprobar si las vulnerabilidades existen de
+                  verdad.
+                </p>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-top">
+                <span class="card-number">04</span>
+                <span class="card-icon"><i class="fa-solid fa-eye"></i></span>
+              </div>
+              <div class="card-content">
+                <h3>Detectar</h3>
+                <p>
+                  Wazuh/SOC y Suricata registran eventos, alertas y logs durante
+                  las pruebas para ver cómo responde la infraestructura.
+                </p>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-top">
+                <span class="card-number">05</span>
+                <span class="card-icon"
+                  ><i class="fa-solid fa-file-lines"></i
+                ></span>
+              </div>
+              <div class="card-content">
+                <h3>Informar</h3>
+                <p>
+                  Un informe por cada vulnerabilidad: el problema, el riesgo,
+                  los sistemas afectados y cómo solucionarlo. Todo visible en el
+                  dashboard del cliente.
+                </p>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-top">
+                <span class="card-number">06</span>
+                <span class="card-icon"
+                  ><i class="fa-solid fa-wrench"></i
+                ></span>
+              </div>
+              <div class="card-content">
+                <h3>Corregir</h3>
+                <p>
+                  Implementamos las medidas correctivas y preventivas necesarias
+                  para cerrar cada vulnerabilidad encontrada.
+                </p>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-top">
+                <span class="card-number">07</span>
+                <span class="card-icon"
+                  ><i class="fa-solid fa-rotate-left"></i
+                ></span>
+              </div>
+              <div class="card-content">
+                <h3>Recuperar</h3>
+                <p>
+                  Repetimos las pruebas para confirmar que todo está solucionado
+                  y mantenemos backups automáticos para recuperar los sistemas.
+                </p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ENTORNO: 3 PCs -->
+      <section class="section" id="entorno">
+        <div class="container">
+          <div class="section-head">
+            <span class="eyebrow">Entorno del proyecto</span>
+            <h2>Tres equipos, un servicio completo.</h2>
+            <p>
+              Simulamos el trabajo de una empresa de ciberseguridad, desde la
+              prevención hasta la recuperación, en un entorno controlado.
+            </p>
+          </div>
+
+          <div class="pc-grid">
+            <article class="pc-card">
+              <span class="pc-card__tag">PC 1</span>
+              <h3>Infraestructura del cliente</h3>
+              <p>
+                La red que protegemos: virtualizada, segmentada y monitorizada.
+              </p>
+              <ul class="chips">
+                <li>Proxmox</li>
+                <li>DMZ</li>
+                <li>Linux</li>
+                <li>DNS</li>
+                <li>nftables</li>
+                <li>Suricata</li>
+                <li>Prometheus</li>
+              </ul>
+            </article>
+
+            <article class="pc-card">
+              <span class="pc-card__tag">PC 2</span>
+              <h3>Empresa CIVEX</h3>
+              <p>
+                Nuestro centro de operaciones: monitorización, plataforma web e
+                informes.
+              </p>
+              <ul class="chips">
+                <li>SOC / Wazuh</li>
+                <li>Plataforma web</li>
+                <li>Firebase</li>
+                <li>Informes</li>
+                <li>Clientes</li>
+                <li>Backups</li>
+              </ul>
+            </article>
+
+            <article class="pc-card">
+              <span class="pc-card__tag">PC 3</span>
+              <h3>Equipo de ataque</h3>
+              <p>Desde aquí realizamos las pruebas de seguridad controladas.</p>
+              <ul class="chips">
+                <li>Kali Linux</li>
+                <li>Pruebas controladas</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- CASO PRÁCTICO -->
+      <section class="section section--alt" id="caso">
+        <div class="container split">
+          <div>
+            <span class="eyebrow">Caso práctico</span>
+            <h2>Clínica Dental SonrisaViva.</h2>
+            <p>
+              Como caso hipotético, ofrecemos nuestros servicios a un centro
+              médico privado ficticio que necesita apoyo externo para analizar y
+              proteger su infraestructura.
+            </p>
+            <p>
+              Lo hemos elegido porque es fácil de simular y atacar en un entorno
+              controlado, y muy didáctico: permite trabajar con distintos
+              sistemas, servicios y tipos de información sensible. Todo el
+              entorno es ficticio, sin datos reales de pacientes.
+            </p>
+          </div>
+
+          <div>
+            <div class="case-panel">
+              <h3>Qué protegemos</h3>
+              <ul class="case-list">
+                <li>
+                  <i class="fa-solid fa-notes-medical"></i> Historiales clínicos
+                </li>
+                <li>
+                  <i class="fa-solid fa-user-injured"></i> Datos de pacientes
+                </li>
+                <li><i class="fa-solid fa-calendar-check"></i> Citas online</li>
+                <li><i class="fa-solid fa-database"></i> Backups críticos</li>
+                <li>
+                  <i class="fa-solid fa-user-gear"></i> Poco personal IT:
+                  necesitan apoyo externo
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="cta" id="contacto">
+        <div class="cta-content">
+          <span class="eyebrow">CONTACTA CON NOSOTROS</span>
+
+          <h2>¿Sabes dónde está el punto débil de tu empresa?</h2>
+
+          <p>
+            Cuéntanos cómo es tu infraestructura. La analizamos, la ponemos a
+            prueba y te explicamos cómo protegerla.
+          </p>
+
+          <a href="mailto:contacto@tudominio.com" class="btn">
+            Solicitar análisis
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="footer">
+        <div class="footer-container">
+          <!-- IZQUIERDA -->
+          <div class="footer__brand">
+            <h2>CIVEX<span>.</span></h2>
+
+            <p>
+              Analizar, prevenir, atacar, detectar, informar, corregir y
+              recuperar.
+            </p>
+
+            <div class="socials">
+              <a href="#" class="social" aria-label="GitHub">
+                <i class="fa-brands fa-github"></i>
+              </a>
+
+              <a href="#" class="social" aria-label="LinkedIn">
+                <i class="fa-brands fa-linkedin-in"></i>
+              </a>
+
+              <a href="#" class="social" aria-label="Instagram">
+                <i class="fa-brands fa-instagram"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- DERECHA -->
+          <div class="footer-links">
+            <nav class="footer__col" aria-label="Explorar">
+              <h3>Explorar</h3>
+              <ul>
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#nosotros">Nosotros</a></li>
+                <li><a href="#metodologia">Metodología</a></li>
+                <li><a href="#entorno">Entorno</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+              </ul>
+            </nav>
+
+            <nav class="footer__col" aria-label="Información">
+              <h3>Información</h3>
+              <ul>
+                <li><a href="#caso">Caso práctico</a></li>
+                <li><a href="#">Área cliente</a></li>
+                <li><a href="#">Privacidad</a></li>
+                <li><a href="#">Términos legales</a></li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>© 2026 CIVEX. Proyecto ASIX.</p>
+          <span>Entorno ficticio con fines educativos.</span>
+        </div>
+      </footer>
+    </main>
+
+    <!-- Lenis + GSAP (el orden importa: librerías primero, luego tu script) -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js"
+      defer
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
+      defer
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"
+      defer
+    ></script>
+    <script src="assets/smooth-scroll.js" defer></script>
+
+    <script src="assets/gradient.js" defer></script>
+    <script src="assets/navbar.js" defer></script>
+  </body>
+</html>
