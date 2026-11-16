@@ -265,7 +265,7 @@ INSERT INTO clientes (nombre, descripcion) VALUES
   ('Clínica Dental SonrisaViva', 'Centro médico privado ficticio. Caso práctico del proyecto.');
 
 -- Contraseñas: se generan desde PHP con password_hash(); aquí queda un marcador
-INSERT INTO usuarios (cliente_id, nombre, email, password_hash, rol) VALUES
+INSERT INTO usuarios (cliente_id, nombre, apellido, email, password_hash, rol) VALUES
   (NULL, 'Admin CIVEX', 'apellido',  'admin@civex.local',        'PENDIENTE_HASH', 'admin_civex'),
   (1,    'Usuario Demo', 'apellido', 'demo@sonrisaviva.local',   'PENDIENTE_HASH', 'cliente');
 
